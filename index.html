@@ -411,7 +411,7 @@
       <label>Título</label>
       <input type="text" id="fTitulo" placeholder="Ej: Prueba 2 (25%)">
     </div>
-    <p class="form-hint">Solo aparece en el calendario si la fecha cae entre agosto y diciembre de 2026 (igual se guarda si no).</p>
+    <p class="form-hint">Solo aparece en el calendario si la fecha cae entre agosto de 2026 y diciembre de 2027 (igual se guarda si no).</p>
     <div class="form-actions">
       <button class="btn btn-primary" id="fSave">Guardar</button>
       <button class="btn btn-secondary" id="fCancel">Cancelar</button>
@@ -442,17 +442,19 @@ let META = { version:1, timezone:'America/Santiago' };
 let COURSES = {};   // { FS:{name,color}, ... }
 let EVENTS = [];    // cat: 'eval' | 'deadline'; "time" opcional {start,end}
 
-const MONTHS = [
-  {y:2026,m:7, label:'Agosto',      id:'m-ago'},
-  {y:2026,m:8, label:'Septiembre',  id:'m-sep'},
-  {y:2026,m:9, label:'Octubre',     id:'m-oct'},
-  {y:2026,m:10,label:'Noviembre',   id:'m-nov'},
-  {y:2026,m:11,label:'Diciembre',   id:'m-dic'},
-];
+// Agosto 2026 a diciembre 2027 (2027 completo, para ir agregando eventos).
+const MONTH_NAMES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+const MONTHS = [];
+for(let y=2026; y<=2027; y++){
+  for(let m=(y===2026?7:0); m<=11; m++){
+    const name = MONTH_NAMES[m];
+    MONTHS.push({y, m, label:name, short: name.slice(0,3) + (y===2026 ? '' : " '" + String(y).slice(2)), id:'m-'+y+'-'+String(m+1).padStart(2,'0')});
+  }
+}
 const WEEKDAYS = ['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'];
 const CAT_LABEL = {eval:'EVAL', deadline:'ENTREGA', class:''};
 const CAT_RANK  = {eval:0, deadline:1, class:2};
-const SEM_MIN = '2026-08-01', SEM_MAX = '2026-12-31';
+const SEM_MIN = '2026-08-01', SEM_MAX = '2027-12-31';
 
 let nextId = 1;
 
@@ -496,7 +498,7 @@ const quicknav = document.getElementById('quicknav');
 MONTHS.forEach(mo=>{
   const pill = document.createElement('div');
   pill.className='nav-pill';
-  pill.textContent = mo.label.slice(0,3);
+  pill.textContent = mo.short;
   pill.addEventListener('click', ()=>{
     document.getElementById(mo.id).scrollIntoView({behavior:'smooth', block:'start'});
   });
@@ -528,13 +530,14 @@ function renderTimeline(){
 
   MONTHS.forEach(mo=>{
     const d = new Date(mo.y, mo.m, 1);
+    if(d > semEnd) return;  // la línea de tiempo solo cubre desde el primer hasta el último evento
     const p = pct(d);
     const tick = document.createElement('div');
     tick.className='timeline-tick'; tick.style.left = p+'%';
     timelineEl.appendChild(tick);
     const lab = document.createElement('div');
     lab.className='timeline-tick-label'; lab.style.left = clampLabelPct(p)+'%';
-    lab.textContent = mo.label.slice(0,3);
+    lab.textContent = mo.short;
     timelineEl.appendChild(lab);
   });
   const track = document.createElement('div'); track.className='timeline-track';
@@ -843,7 +846,7 @@ fSave.addEventListener('click', ()=>{
   }
   saveLocal();
   if(date < SEM_MIN || date > SEM_MAX){
-    alert('Ojo: esa fecha cae fuera de agosto–diciembre 2026, así que se guarda pero no se va a ver en el calendario visual.');
+    alert('Ojo: esa fecha cae fuera de agosto 2026 – diciembre 2027, así que se guarda pero no se va a ver en el calendario visual.');
   }
   rerender();
   closeEditForm();
