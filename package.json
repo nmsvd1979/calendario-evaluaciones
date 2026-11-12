@@ -1,0 +1,14 @@
+{
+  "name": "calendario-evaluaciones",
+  "private": true,
+  "description": "Calendario académico 2º semestre 2026: PWA + .ics desde events.json",
+  "scripts": {
+    "ics": "node scripts/generate-ics.mjs && node scripts/validate-ics.mjs",
+    "icons": "node scripts/make-icons.mjs",
+    "test": "node scripts/validate-ics.mjs && node scripts/test-dates.mjs"
+  },
+  "devDependencies": {
+    "@resvg/resvg-js": "^2.6.2",
+    "ical.js": "^2.2.1"
+  }
+}

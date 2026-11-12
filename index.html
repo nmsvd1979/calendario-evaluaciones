@@ -1,0 +1,967 @@
+<!DOCTYPE html>
+<html lang="es"><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#1A2233">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Evaluaciones">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon-180.png">
+<link rel="icon" type="image/svg+xml" href="icons/icon.svg">
+<title>Calendario Académico — 2º Semestre 2026</title>
+<link href="fonts.css" rel="stylesheet">
+<style>
+  :root{
+    --bg:#EFF2F6;
+    --surface:#FFFFFF;
+    --ink:#1A2233;
+    --ink-soft:#545F70;
+    --line:#DFE3EA;
+    --line-strong:#C7CDD8;
+
+    --fs:#0A6E62;  /* Financiamiento de Startups — verde azulado */
+    --ec:#B5334A;  /* Experiencia de Clientes — carmín */
+    --pp:#8F6209;  /* Precios y Promociones — ocre dorado */
+    --cne:#6A3FD1; /* Creación de Nuevas Empresas — violeta */
+    --le:#2452C7;  /* Liderazgo Estratégico — azul */
+
+    --alert-bg:#FBF1E2;
+    --alert-border:#E9CE9E;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  html, body{
+    overflow-x:hidden;
+    width:100%;
+  }
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--ink);
+    font-family:'Inter',system-ui,sans-serif;
+    font-size:15.5px;
+    line-height:1.45;
+    padding-bottom:calc(110px + env(safe-area-inset-bottom));
+  }
+  .wrap{max-width:1120px;width:100%;margin:0 auto;padding:0 max(16px, env(safe-area-inset-right)) 0 max(16px, env(safe-area-inset-left));}
+  a{color:inherit;}
+
+  /* ---------- MASTHEAD (sticky) ---------- */
+  #masthead{
+    position:sticky;top:0;z-index:40;
+    background:var(--ink);
+    color:#EDEFF3;
+    padding:calc(11px + env(safe-area-inset-top)) 0 11px;
+    box-shadow:0 2px 10px rgba(20,25,40,.12);
+  }
+  .masthead-inner{
+    max-width:1120px;width:100%;margin:0 auto;padding:0 max(16px, env(safe-area-inset-right)) 0 max(16px, env(safe-area-inset-left));
+    display:flex;align-items:center;justify-content:center;gap:10px;
+    overflow-x:auto;
+    scrollbar-width:none;
+    -webkit-mask-image:linear-gradient(to right, transparent 0, black 14px, black calc(100% - 14px), transparent 100%);
+    mask-image:linear-gradient(to right, transparent 0, black 14px, black calc(100% - 14px), transparent 100%);
+  }
+  .masthead-inner::-webkit-scrollbar{display:none;}
+  .legend-strip{display:flex;gap:8px;flex-shrink:0;margin:0 auto;}
+  .legend-chip{
+    display:flex;align-items:center;gap:6px;
+    white-space:nowrap;
+    font-size:.7rem;
+    background:rgba(255,255,255,.08);
+    border-radius:999px;padding:4px 10px 4px 4px;
+    flex-shrink:0;
+  }
+  .code-badge{
+    font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:.64rem;
+    color:#fff;background:var(--c);
+    border-radius:999px;padding:2px 7px;
+    flex-shrink:0;
+  }
+
+  /* ---------- QUICK NAV ---------- */
+  #quicknav{
+    display:flex;gap:8px;align-items:center;
+    padding:14px 0 0;overflow-x:auto;scrollbar-width:none;
+  }
+  #quicknav::-webkit-scrollbar{display:none;}
+  .nav-pill{
+    font-family:'IBM Plex Mono',monospace;font-size:.72rem;font-weight:600;
+    background:var(--surface);border:1px solid var(--line-strong);
+    border-radius:999px;padding:6px 14px;cursor:pointer;
+    white-space:nowrap;color:var(--ink);
+    transition:background .15s ease;
+  }
+  .nav-pill:hover{background:#fff;border-color:var(--ink);}
+  .nav-pill.today-pill{background:var(--ink);color:#fff;border-color:var(--ink);}
+
+  /* ---------- HERO / TIMELINE ---------- */
+  .hero{padding:22px 0 8px;}
+  .eyebrow{
+    font-family:'IBM Plex Mono',monospace;font-size:.7rem;
+    letter-spacing:.12em;text-transform:uppercase;
+    color:var(--ink-soft);margin:0 0 6px;
+  }
+  h1{
+    font-family:'Fraunces',serif;font-weight:600;
+    font-size:clamp(1.55rem,4vw,2.1rem);
+    margin:0 0 14px;line-height:1.1;
+  }
+  .timeline{position:relative;height:44px;margin:0 0 6px;}
+  .timeline-track{
+    position:absolute;left:0;right:0;top:18px;height:6px;
+    background:var(--line-strong);border-radius:999px;
+  }
+  .timeline-fill{
+    position:absolute;left:0;top:18px;height:6px;
+    background:var(--ink);border-radius:999px;
+  }
+  .timeline-tick{
+    position:absolute;top:10px;width:1px;height:22px;background:var(--line-strong);
+  }
+  .timeline-tick-label{
+    position:absolute;top:32px;transform:translateX(-50%);
+    font-family:'IBM Plex Mono',monospace;font-size:.64rem;color:var(--ink-soft);
+    white-space:nowrap;
+  }
+  .timeline-marker{
+    position:absolute;top:12px;width:14px;height:14px;
+    background:var(--ink);border:3px solid var(--bg);border-radius:50%;
+    transform:translateX(-50%);
+  }
+  .timeline-marker-label{
+    position:absolute;top:-16px;transform:translateX(-50%);
+    font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:.62rem;
+    color:var(--ink);white-space:nowrap;
+  }
+
+  /* ---------- PANELS ---------- */
+  .panel{
+    background:var(--surface);border:1px solid var(--line);
+    border-radius:14px;padding:18px 20px;
+  }
+  .panel h2{
+    font-family:'Fraunces',serif;font-size:1.05rem;font-weight:600;margin:0 0 4px;
+  }
+  .panel .panel-sub{font-size:.78rem;color:var(--ink-soft);margin:0 0 12px;}
+
+  #upcoming-panel{margin:20px 0 14px;}
+  .up-item{
+    display:flex;align-items:center;gap:12px;
+    padding:9px 0;border-bottom:1px solid var(--line);
+  }
+  .up-item:last-child{border-bottom:none;}
+  .up-date{
+    font-family:'IBM Plex Mono',monospace;font-weight:600;font-size:.74rem;
+    color:var(--ink-soft);min-width:58px;
+  }
+  .up-title{font-size:.86rem;flex:1;min-width:0;}
+  .up-title b{font-weight:600;}
+  .tag-inline{
+    font-family:'IBM Plex Mono',monospace;font-size:.6rem;font-weight:700;
+    letter-spacing:.04em;color:var(--ink-soft);margin-right:5px;
+  }
+
+  .panel-row{display:grid;grid-template-columns:1.1fr .9fr;gap:14px;margin-bottom:22px;}
+  @media(max-width:720px){.panel-row{grid-template-columns:1fr;}}
+
+  #conflicts-panel{background:var(--alert-bg);border-color:var(--alert-border);}
+  .conflict-item{
+    display:flex;align-items:center;gap:10px;padding:7px 0;
+    border-bottom:1px solid var(--alert-border);font-size:.82rem;
+  }
+  .conflict-item:last-child{border-bottom:none;}
+  .conflict-date{
+    font-family:'IBM Plex Mono',monospace;font-weight:600;font-size:.72rem;
+    color:var(--ink-soft);min-width:58px;
+  }
+  .conflict-codes{display:flex;gap:6px;}
+
+  .key-row{display:flex;align-items:center;gap:10px;padding:6px 0;font-size:.8rem;}
+  .key-swatch{
+    min-width:34px;flex-shrink:0;height:20px;border-radius:5px;
+    display:inline-flex;align-items:center;justify-content:center;
+    padding:0 6px;white-space:nowrap;
+    font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:.58rem;color:#fff;
+  }
+  .empty-msg{color:var(--ink-soft);font-size:.85rem;}
+
+  /* ---------- MONTH CARDS ---------- */
+  .month-card{
+    background:var(--surface);border:1px solid var(--line);
+    border-radius:16px;padding:20px 18px 22px;margin-bottom:18px;
+    scroll-margin-top:calc(132px + env(safe-area-inset-top));
+  }
+  .month-head{
+    display:flex;justify-content:space-between;align-items:baseline;
+    flex-wrap:wrap;gap:6px;margin-bottom:14px;
+    border-bottom:2px solid var(--ink);padding-bottom:10px;
+  }
+  .month-name{font-family:'Fraunces',serif;font-weight:700;font-size:1.4rem;}
+  .month-year{font-weight:400;color:var(--ink-soft);font-size:.85rem;}
+  .month-stats{
+    font-family:'IBM Plex Mono',monospace;font-size:.68rem;color:var(--ink-soft);
+    letter-spacing:.02em;
+  }
+  .weekday-row{display:grid;grid-template-columns:repeat(7,1fr);margin-bottom:6px;}
+  .weekday-row div{
+    text-align:center;font-size:.66rem;font-weight:600;
+    font-family:'IBM Plex Mono',monospace;color:var(--ink-soft);
+    letter-spacing:.06em;padding-bottom:4px;
+  }
+  .grid{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;}
+  .day-cell{
+    background:#FAFBFC;border:1px solid var(--line);border-radius:9px;
+    min-height:68px;min-width:0;overflow:hidden;padding:5px 5px 6px;
+    display:flex;flex-direction:column;gap:3px;
+  }
+  @media(max-width:640px){ .day-cell{min-height:54px;padding:4px;} }
+  .day-cell.blank{background:transparent;border-color:transparent;}
+  .day-cell.has-events{cursor:pointer;}
+  .day-cell.has-events:hover{border-color:var(--ink-soft);}
+  .day-cell.today{
+    background:#FFF9EC;border:1.5px solid var(--ink);
+  }
+  .day-num-row{display:flex;justify-content:space-between;align-items:center;}
+  .day-num{font-family:'IBM Plex Mono',monospace;font-size:.72rem;font-weight:600;color:var(--ink-soft);}
+  .today .day-num{color:var(--ink);}
+  .today-tag{
+    font-family:'IBM Plex Mono',monospace;font-size:.55rem;font-weight:700;
+    color:#fff;background:var(--ink);border-radius:4px;padding:1px 4px;letter-spacing:.03em;
+  }
+  .chip{
+    display:flex;align-items:center;gap:4px;
+    border-radius:5px;overflow:hidden;width:100%;
+  }
+  .chip-code{
+    font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:.58rem;
+    padding:2px 4px;border-radius:4px;flex-shrink:0;color:#fff;background:var(--c);
+  }
+  .chip-text{
+    font-size:.63rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+    min-width:0;flex:1;color:var(--ink);
+  }
+  .chip.deadline{background:color-mix(in srgb, var(--c) 22%, white);padding:1.5px 4px 1.5px 1.5px;}
+  .chip.deadline .chip-text{font-weight:600;}
+  .chip.eval{background:color-mix(in srgb, var(--c) 30%, white);padding:1.5px 4px 1.5px 1.5px;border:1px solid var(--c);}
+  .chip.eval .chip-text{font-weight:700;}
+  .cat-tag{
+    font-family:'IBM Plex Mono',monospace;font-size:.52rem;font-weight:700;
+    letter-spacing:.03em;color:var(--ink-soft);flex-shrink:0;
+  }
+  .chip-more{font-family:'IBM Plex Mono',monospace;font-size:.6rem;color:var(--ink-soft);font-weight:600;padding-left:2px;}
+
+  /* ---------- DETAIL SHEET ---------- */
+  #scrim{
+    position:fixed;inset:0;background:rgba(20,25,40,.28);
+    opacity:0;pointer-events:none;transition:opacity .25s ease;z-index:55;
+  }
+  #scrim.show{opacity:1;pointer-events:auto;}
+  .sheet{
+    position:fixed;left:0;right:0;bottom:0;background:var(--surface);
+    border-top:2px solid var(--ink);border-radius:18px 18px 0 0;
+    box-shadow:0 -12px 34px rgba(20,25,40,.18);
+    transform:translateY(105%);transition:transform .28s ease;
+    max-height:70vh;overflow-y:auto;z-index:60;
+  }
+  .sheet.show{transform:translateY(0);}
+  .detail-inner{max-width:1120px;margin:0 auto;padding:18px max(22px, env(safe-area-inset-right)) calc(28px + env(safe-area-inset-bottom)) max(22px, env(safe-area-inset-left));}
+  .detail-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;}
+  .detail-date{font-family:'Fraunces',serif;font-weight:600;font-size:1.25rem;text-transform:capitalize;}
+  .detail-close{
+    border:none;background:var(--line);color:var(--ink);
+    width:30px;height:30px;border-radius:999px;cursor:pointer;font-size:.95rem;flex-shrink:0;
+  }
+  .detail-item{display:flex;gap:12px;align-items:flex-start;padding:11px 0;border-bottom:1px solid var(--line);}
+  .detail-item:last-child{border-bottom:none;}
+  .detail-code{
+    font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:.72rem;
+    color:#fff;background:var(--c);border-radius:6px;padding:3px 8px;white-space:nowrap;margin-top:2px;
+  }
+  .detail-cat{
+    font-family:'IBM Plex Mono',monospace;font-size:.6rem;font-weight:700;letter-spacing:.03em;
+    color:var(--ink-soft);display:block;margin-bottom:2px;
+  }
+  .detail-title{font-size:.94rem;font-weight:600;}
+  .detail-course{font-size:.78rem;color:var(--ink-soft);margin-top:1px;}
+
+  /* ---------- EDITOR: buttons & form ---------- */
+  .hero-actions{display:flex;gap:10px;flex-wrap:wrap;margin:16px 0 6px;}
+  .btn{
+    font-family:'IBM Plex Mono',monospace;font-size:.72rem;font-weight:700;
+    border:none;border-radius:8px;padding:9px 15px;cursor:pointer;
+    display:inline-flex;align-items:center;gap:6px;letter-spacing:.01em;
+  }
+  .btn-primary{background:var(--ink);color:#fff;}
+  .btn-primary:hover{background:#000;}
+  .btn-secondary{background:var(--line);color:var(--ink);}
+  .btn-secondary:hover{background:var(--line-strong);}
+  .btn-danger{background:var(--ec);color:#fff;}
+  .btn-danger:hover{filter:brightness(.9);}
+  .form-hint{font-size:.72rem;color:var(--ink-soft);margin:0 0 16px;}
+  .fab{
+    position:fixed;right:calc(20px + env(safe-area-inset-right));bottom:calc(24px + env(safe-area-inset-bottom));z-index:45;
+    width:54px;height:54px;border-radius:50%;
+    background:var(--ink);color:#fff;border:none;
+    font-size:1.6rem;line-height:1;cursor:pointer;
+    box-shadow:0 6px 20px rgba(20,25,40,.32);
+    display:flex;align-items:center;justify-content:center;
+  }
+  .fab:hover{background:#000;}
+  .form-row{margin-bottom:13px;}
+  .form-row label{
+    display:block;font-family:'IBM Plex Mono',monospace;font-size:.66rem;
+    text-transform:uppercase;letter-spacing:.05em;color:var(--ink-soft);margin-bottom:5px;
+  }
+  .form-row input, .form-row select{
+    width:100%;padding:9px 11px;border:1px solid var(--line-strong);border-radius:8px;
+    font-family:'Inter',sans-serif;font-size:.9rem;color:var(--ink);background:#fff;
+  }
+  .form-actions{display:flex;gap:8px;margin-top:16px;flex-wrap:wrap;}
+  .item-actions{display:flex;gap:6px;margin-left:auto;flex-shrink:0;padding-left:8px;}
+  .icon-btn{
+    border:none;background:var(--line);border-radius:6px;
+    width:27px;height:27px;cursor:pointer;font-size:.78rem;
+    display:flex;align-items:center;justify-content:center;color:var(--ink);flex-shrink:0;
+  }
+  .icon-btn:hover{background:var(--line-strong);}
+  .sheet-add-row{padding:12px 0 2px;}
+</style>
+</head>
+<body>
+<div id="scrim"></div>
+
+<div id="masthead">
+  <div class="masthead-inner">
+    <div class="legend-strip" id="legendStrip"></div>
+  </div>
+</div>
+
+<div class="wrap">
+  <div id="quicknav"></div>
+
+  <div class="hero">
+    <div class="eyebrow">Ingeniería Comercial UC · 2º Semestre 2026</div>
+    <h1>Calendario de Evaluaciones y Entregas</h1>
+    <div class="hero-actions">
+      <button class="btn btn-primary" id="btnExportIcs">⬇ Exportar .ics</button>
+      <button class="btn btn-secondary" id="btnAdd">＋ Agregar evento</button>
+      <button class="btn btn-secondary" id="btnBackup">⬇ Exportar respaldo (.json)</button>
+      <button class="btn btn-secondary" id="btnReset">↺ Restablecer datos originales</button>
+    </div>
+    <p class="form-hint">Puedes editar o borrar haciendo clic en un día. Los cambios se guardan en este dispositivo. Exporta el .ics para actualizar el Calendario de Apple, o un respaldo para no perderlos.</p>
+    <div class="timeline" id="timeline"></div>
+  </div>
+
+  <div class="panel" id="upcoming-panel">
+    <h2>Próximas evaluaciones y entregas</h2>
+    <p class="panel-sub">Se actualiza solo, según la fecha en que abras este archivo.</p>
+    <div id="upcoming"></div>
+  </div>
+
+  <div class="panel-row">
+    <div class="panel" id="conflicts-panel">
+      <h2>⚠ Choques de fecha</h2>
+      <p class="panel-sub">Dos o más cursos evalúan el mismo día.</p>
+      <div id="conflicts"></div>
+    </div>
+    <div class="panel">
+      <h2>Cómo leer el calendario</h2>
+      <div id="legendKey"></div>
+    </div>
+  </div>
+
+  <div id="months"></div>
+</div>
+
+<div id="detail" class="sheet">
+  <div class="detail-inner">
+    <div class="detail-top">
+      <div class="detail-date" id="detailDate"></div>
+      <button class="detail-close" id="detailClose">✕</button>
+    </div>
+    <div id="detailList"></div>
+  </div>
+</div>
+
+<div id="editSheet" class="sheet">
+  <div class="detail-inner">
+    <div class="detail-top">
+      <div class="detail-date" id="editTitle">Agregar evento</div>
+      <button class="detail-close" id="editClose">✕</button>
+    </div>
+    <div class="form-row">
+      <label>Fecha</label>
+      <input type="date" id="fFecha">
+    </div>
+    <div class="form-row">
+      <label>Curso</label>
+      <select id="fCurso"></select>
+    </div>
+    <div class="form-row">
+      <label>Tipo</label>
+      <select id="fTipo">
+        <option value="eval">Evaluación</option>
+        <option value="deadline">Entrega / hito</option>
+      </select>
+    </div>
+    <div class="form-row">
+      <label>Título</label>
+      <input type="text" id="fTitulo" placeholder="Ej: Prueba 2 (25%)">
+    </div>
+    <p class="form-hint">Solo aparece en el calendario si la fecha cae entre agosto y diciembre de 2026 (igual se guarda si no).</p>
+    <div class="form-actions">
+      <button class="btn btn-primary" id="fSave">Guardar</button>
+      <button class="btn btn-secondary" id="fCancel">Cancelar</button>
+      <button class="btn btn-danger" id="fDelete" style="display:none;">Eliminar evento</button>
+    </div>
+  </div>
+</div>
+
+<div id="icsSheet" class="sheet">
+  <div class="detail-inner">
+    <div class="detail-top">
+      <div class="detail-date" style="text-transform:none;">Exportar .ics</div>
+      <button class="detail-close" id="icsClose">✕</button>
+    </div>
+    <p class="form-hint">Un archivo por curso, con los cambios hechos en esta app. Impórtalo en el calendario del mismo curso para actualizarlo.</p>
+    <div id="icsList"></div>
+  </div>
+</div>
+
+<button class="fab" id="fabAdd" title="Agregar evento">＋</button>
+
+<script src="ics-core.js"></script>
+<script>
+// Los datos iniciales salen de events.json (fuente única, la misma que usan
+// los .ics). Los cambios hechos en la app se guardan en este dispositivo.
+const STORAGE_KEY = 'calendario-uc-2026s2:v1';
+let META = { version:1, timezone:'America/Santiago' };
+let COURSES = {};   // { FS:{name,color}, ... }
+let EVENTS = [];    // cat: 'eval' | 'deadline'; "time" opcional {start,end}
+
+const MONTHS = [
+  {y:2026,m:7, label:'Agosto',      id:'m-ago'},
+  {y:2026,m:8, label:'Septiembre',  id:'m-sep'},
+  {y:2026,m:9, label:'Octubre',     id:'m-oct'},
+  {y:2026,m:10,label:'Noviembre',   id:'m-nov'},
+  {y:2026,m:11,label:'Diciembre',   id:'m-dic'},
+];
+const WEEKDAYS = ['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'];
+const CAT_LABEL = {eval:'EVAL', deadline:'ENTREGA', class:''};
+const CAT_RANK  = {eval:0, deadline:1, class:2};
+const SEM_MIN = '2026-08-01', SEM_MAX = '2026-12-31';
+
+let nextId = 1;
+
+function isoLocal(y,m,day){
+  return y + '-' + String(m+1).padStart(2,'0') + '-' + String(day).padStart(2,'0');
+}
+
+let byDate = {};
+function rebuildIndex(){
+  byDate = {};
+  EVENTS.forEach(ev=>{ (byDate[ev.date] = byDate[ev.date] || []).push(ev); });
+  Object.values(byDate).forEach(list=> list.sort((a,b)=> CAT_RANK[a.cat]-CAT_RANK[b.cat] || a.course.localeCompare(b.course)));
+}
+
+function parseISO(iso){ return new Date(iso+'T00:00:00'); }
+function fmtDateLong(iso){
+  return parseISO(iso).toLocaleDateString('es-CL',{weekday:'long',day:'numeric',month:'long'});
+}
+function fmtDateShort(iso){
+  return parseISO(iso).toLocaleDateString('es-CL',{day:'2-digit',month:'short'}).replace('.','');
+}
+function isSameDay(a,b){
+  return a.getFullYear()===b.getFullYear() && a.getMonth()===b.getMonth() && a.getDate()===b.getDate();
+}
+
+/* ================= MASTHEAD LEGEND ================= */
+const legendStrip = document.getElementById('legendStrip');
+function renderLegend(){
+  legendStrip.innerHTML = '';
+  Object.entries(COURSES).forEach(([code,info])=>{
+    const chip = document.createElement('div');
+    chip.className='legend-chip';
+    chip.style.setProperty('--c', info.color);
+    chip.innerHTML = `<span class="code-badge">${code}</span><span>${info.name}</span>`;
+    legendStrip.appendChild(chip);
+  });
+}
+
+/* ================= QUICK NAV ================= */
+const quicknav = document.getElementById('quicknav');
+MONTHS.forEach(mo=>{
+  const pill = document.createElement('div');
+  pill.className='nav-pill';
+  pill.textContent = mo.label.slice(0,3);
+  pill.addEventListener('click', ()=>{
+    document.getElementById(mo.id).scrollIntoView({behavior:'smooth', block:'start'});
+  });
+  quicknav.appendChild(pill);
+});
+const todayPill = document.createElement('div');
+todayPill.className='nav-pill today-pill';
+todayPill.textContent='Hoy ↓';
+todayPill.style.display='none';
+todayPill.addEventListener('click', ()=>{
+  const el = document.querySelector('.day-cell.today');
+  if(el) el.scrollIntoView({behavior:'smooth', block:'center'});
+});
+quicknav.appendChild(todayPill);
+
+/* ================= HERO TIMELINE ================= */
+const today = new Date(); today.setHours(0,0,0,0);
+const timelineEl = document.getElementById('timeline');
+function clampLabelPct(p){ return Math.max(3, Math.min(97, p)); }
+
+function renderTimeline(){
+  timelineEl.innerHTML = '';
+  if(!EVENTS.length) return;
+  const allDates = EVENTS.map(e=>parseISO(e.date));
+  const semStart = new Date(Math.min(...allDates));
+  const semEnd   = new Date(Math.max(...allDates));
+  const totalSpan = semEnd - semStart;
+  const pct = d => Math.max(0, Math.min(100, ((d-semStart)/totalSpan)*100));
+
+  MONTHS.forEach(mo=>{
+    const d = new Date(mo.y, mo.m, 1);
+    const p = pct(d);
+    const tick = document.createElement('div');
+    tick.className='timeline-tick'; tick.style.left = p+'%';
+    timelineEl.appendChild(tick);
+    const lab = document.createElement('div');
+    lab.className='timeline-tick-label'; lab.style.left = clampLabelPct(p)+'%';
+    lab.textContent = mo.label.slice(0,3);
+    timelineEl.appendChild(lab);
+  });
+  const track = document.createElement('div'); track.className='timeline-track';
+  timelineEl.appendChild(track);
+  const fill = document.createElement('div'); fill.className='timeline-fill';
+  const todayPct = pct(today);
+  fill.style.width = todayPct+'%';
+  timelineEl.appendChild(fill);
+
+  if(today >= semStart && today <= semEnd){
+    const marker = document.createElement('div');
+    marker.className='timeline-marker'; marker.style.left = todayPct+'%';
+    timelineEl.appendChild(marker);
+    const mlabel = document.createElement('div');
+    mlabel.className='timeline-marker-label'; mlabel.style.left = clampLabelPct(todayPct)+'%';
+    mlabel.textContent = 'HOY';
+    timelineEl.appendChild(mlabel);
+  }
+}
+
+/* ================= UPCOMING ================= */
+function renderUpcoming(){
+  const upcoming = EVENTS
+    .filter(ev => (ev.cat==='eval' || ev.cat==='deadline'))
+    .filter(ev => parseISO(ev.date) >= today)
+    .sort((a,b)=> a.date.localeCompare(b.date))
+    .slice(0,6);
+
+  const upcomingEl = document.getElementById('upcoming');
+  upcomingEl.innerHTML = '';
+  if(upcoming.length===0){
+    upcomingEl.innerHTML = '<p class="empty-msg">Ya pasaron todas las evaluaciones registradas para este semestre.</p>';
+  } else {
+    upcoming.forEach(ev=>{
+      const row = document.createElement('div');
+      row.className='up-item';
+      row.innerHTML = `<span class="up-date">${fmtDateShort(ev.date)}</span>
+        <span class="code-badge" style="--c:${COURSES[ev.course].color}">${ev.course}</span>
+        <span class="up-title">${ev.cat==='eval' ? '<span class="tag-inline">EVAL</span>' : '<span class="tag-inline">ENTREGA</span>'}${ev.title}</span>`;
+      upcomingEl.appendChild(row);
+    });
+  }
+}
+
+/* ================= CONFLICTS ================= */
+function renderConflicts(){
+  const importantByDate = {};
+  EVENTS.filter(ev=>ev.cat!=='class').forEach(ev=>{
+    (importantByDate[ev.date] = importantByDate[ev.date] || []).push(ev);
+  });
+  const conflictDates = Object.keys(importantByDate)
+    .filter(d => new Set(importantByDate[d].map(e=>e.course)).size > 1)
+    .sort();
+
+  const conflictsEl = document.getElementById('conflicts');
+  conflictsEl.innerHTML = '';
+  if(conflictDates.length===0){
+    conflictsEl.innerHTML = '<p class="empty-msg">No se detectaron choques de fecha.</p>';
+  } else {
+    conflictDates.forEach(d=>{
+      const evs = importantByDate[d];
+      const row = document.createElement('div');
+      row.className='conflict-item';
+      const codes = evs.map(e=>`<span class="code-badge" style="--c:${COURSES[e.course].color}">${e.course}</span>`).join('');
+      row.innerHTML = `<span class="conflict-date">${fmtDateShort(d)}</span><span class="conflict-codes">${codes}</span>`;
+      conflictsEl.appendChild(row);
+    });
+  }
+}
+
+/* ================= FORMAT KEY (static) ================= */
+const legendKeyEl = document.getElementById('legendKey');
+legendKeyEl.innerHTML = `
+  <div class="key-row"><span class="key-swatch" style="background:var(--ink)">FS</span> Sigla del curso siempre visible, sin recortar</div>
+  <div class="key-row"><span class="key-swatch" style="background:var(--ink);font-size:.52rem;">EVAL</span> Control, prueba, examen o presentación evaluada</div>
+  <div class="key-row"><span class="key-swatch" style="background:var(--ink);font-size:.5rem;">ENTREGA</span> Hito o entrega sin nota de prueba directa</div>
+`;
+
+/* ================= MONTH GRIDS ================= */
+const monthsEl = document.getElementById('months');
+
+function renderMonths(){
+  monthsEl.innerHTML = '';
+  MONTHS.forEach(({y,m,label,id})=>{
+    const card = document.createElement('div');
+    card.className='month-card';
+    card.id = id;
+
+    const firstOfMonth = new Date(y,m,1);
+    const daysInMonth = new Date(y,m+1,0).getDate();
+    let startIdx = firstOfMonth.getDay();
+    startIdx = (startIdx+6)%7;
+
+    const monthEvals = EVENTS.filter(ev=>{
+      const d = parseISO(ev.date);
+      return d.getFullYear()===y && d.getMonth()===m && ev.cat==='eval';
+    }).length;
+    const monthDeadlines = EVENTS.filter(ev=>{
+      const d = parseISO(ev.date);
+      return d.getFullYear()===y && d.getMonth()===m && ev.cat==='deadline';
+    }).length;
+
+    const head = document.createElement('div');
+    head.className='month-head';
+    head.innerHTML = `<span class="month-name">${label} <span class="month-year">${y}</span></span>
+      <span class="month-stats">${monthEvals} EVAL · ${monthDeadlines} ENTREGA</span>`;
+    card.appendChild(head);
+
+    const wdRow = document.createElement('div');
+    wdRow.className='weekday-row';
+    WEEKDAYS.forEach(w=>{ const d=document.createElement('div'); d.textContent=w; wdRow.appendChild(d); });
+    card.appendChild(wdRow);
+
+    const grid = document.createElement('div');
+    grid.className='grid';
+
+    for(let i=0;i<startIdx;i++){
+      const blank = document.createElement('div');
+      blank.className='day-cell blank';
+      grid.appendChild(blank);
+    }
+
+    for(let day=1; day<=daysInMonth; day++){
+      const dateObj = new Date(y,m,day);
+      const iso = isoLocal(y,m,day);  // fecha local: toISOString() corre el día al este de UTC
+      const cell = document.createElement('div');
+      cell.className='day-cell has-events';
+      const dayEvents = byDate[iso] || [];
+      const isToday = isSameDay(dateObj, today);
+      if(isToday) cell.classList.add('today');
+
+      const numRow = document.createElement('div');
+      numRow.className='day-num-row';
+      numRow.innerHTML = `<span class="day-num">${day}</span>${isToday?'<span class="today-tag">HOY</span>':''}`;
+      cell.appendChild(numRow);
+
+      const shown = dayEvents.slice(0,3);
+      shown.forEach(ev=>{
+        const chip = document.createElement('div');
+        chip.className = `chip ${ev.cat}`;
+        chip.style.setProperty('--c', COURSES[ev.course].color);
+        const catTag = CAT_LABEL[ev.cat] ? `<span class="cat-tag">${CAT_LABEL[ev.cat]}</span>` : '';
+        chip.innerHTML = `<span class="chip-code">${ev.course}</span><span class="chip-text">${ev.title}</span>${catTag}`;
+        cell.appendChild(chip);
+      });
+      if(dayEvents.length>3){
+        const more = document.createElement('div');
+        more.className='chip-more';
+        more.textContent = `+${dayEvents.length-3} más`;
+        cell.appendChild(more);
+      }
+
+      cell.addEventListener('click', ()=>{
+        if((byDate[iso]||[]).length){ openDetail(iso); }
+        else { openEditForm(null, iso); }
+      });
+      grid.appendChild(cell);
+    }
+
+    card.appendChild(grid);
+    monthsEl.appendChild(card);
+  });
+
+  todayPill.style.display = document.querySelector('.day-cell.today') ? 'inline-block' : 'none';
+}
+
+function rerender(){
+  rebuildIndex();
+  renderUpcoming();
+  renderConflicts();
+  renderMonths();
+}
+
+/* ================= DETAIL SHEET (view) ================= */
+const detail = document.getElementById('detail');
+const scrim = document.getElementById('scrim');
+const detailDate = document.getElementById('detailDate');
+const detailList = document.getElementById('detailList');
+
+function openDetail(iso){
+  const events = byDate[iso] || [];
+  detailDate.textContent = fmtDateLong(iso);
+  detailList.innerHTML='';
+  events.forEach(ev=>{
+    const info = COURSES[ev.course];
+    const row = document.createElement('div');
+    row.className='detail-item';
+    const catLabel = CAT_LABEL[ev.cat] ? `<span class="detail-cat">${CAT_LABEL[ev.cat]}</span>` : '';
+    row.innerHTML = `<span class="detail-code" style="--c:${info.color}">${ev.course}</span>
+      <div style="flex:1;min-width:0;">${catLabel}<div class="detail-title">${ev.title}</div>
+      <div class="detail-course">${info.name}</div></div>
+      <div class="item-actions">
+        <button class="icon-btn" data-action="edit" data-id="${ev.id}" title="Editar">✎</button>
+        <button class="icon-btn" data-action="delete" data-id="${ev.id}" title="Eliminar">🗑</button>
+      </div>`;
+    detailList.appendChild(row);
+  });
+  const addRow = document.createElement('div');
+  addRow.className='sheet-add-row';
+  addRow.innerHTML = `<button class="btn btn-secondary" id="addForThisDay">＋ Agregar otro evento este día</button>`;
+  detailList.appendChild(addRow);
+  document.getElementById('addForThisDay').addEventListener('click', ()=>{
+    closeDetail();
+    openEditForm(null, iso);
+  });
+
+  detailList.querySelectorAll('[data-action]').forEach(btn=>{
+    btn.addEventListener('click', (e)=>{
+      const id = Number(e.currentTarget.dataset.id);
+      const action = e.currentTarget.dataset.action;
+      const ev = EVENTS.find(x=>x.id===id);
+      if(!ev) return;
+      if(action==='edit'){
+        closeDetail();
+        openEditForm(ev);
+      } else if(action==='delete'){
+        if(confirm(`¿Eliminar "${ev.title}"?`)){
+          const idx = EVENTS.findIndex(x=>x.id===id);
+          if(idx>-1) EVENTS.splice(idx,1);
+          saveLocal();
+          rerender();
+          closeDetail();
+        }
+      }
+    });
+  });
+
+  detail.classList.add('show');
+  scrim.classList.add('show');
+}
+function closeDetail(){
+  detail.classList.remove('show');
+  scrim.classList.remove('show');
+}
+document.getElementById('detailClose').addEventListener('click', closeDetail);
+
+/* ================= EDIT / ADD SHEET ================= */
+const editSheet = document.getElementById('editSheet');
+const editTitle = document.getElementById('editTitle');
+const fFecha = document.getElementById('fFecha');
+const fCurso = document.getElementById('fCurso');
+const fTipo = document.getElementById('fTipo');
+const fTitulo = document.getElementById('fTitulo');
+const fSave = document.getElementById('fSave');
+const fDelete = document.getElementById('fDelete');
+
+function renderCourseOptions(){
+  fCurso.innerHTML = '';
+  Object.entries(COURSES).forEach(([code,info])=>{
+    const opt = document.createElement('option');
+    opt.value = code; opt.textContent = `${code} — ${info.name}`;
+    fCurso.appendChild(opt);
+  });
+}
+
+let editingId = null;
+
+function openEditForm(ev, prefillDate){
+  if(ev){
+    editingId = ev.id;
+    editTitle.textContent = 'Editar evento';
+    fFecha.value = ev.date;
+    fCurso.value = ev.course;
+    fTipo.value = ev.cat === 'deadline' ? 'deadline' : 'eval';
+    fTitulo.value = ev.title;
+    fDelete.style.display = 'inline-flex';
+  } else {
+    editingId = null;
+    editTitle.textContent = 'Agregar evento';
+    fFecha.value = prefillDate || '';
+    fCurso.value = 'FS';
+    fTipo.value = 'eval';
+    fTitulo.value = '';
+    fDelete.style.display = 'none';
+  }
+  editSheet.classList.add('show');
+  scrim.classList.add('show');
+}
+function closeEditForm(){
+  editSheet.classList.remove('show');
+  scrim.classList.remove('show');
+  editingId = null;
+}
+document.getElementById('editClose').addEventListener('click', closeEditForm);
+document.getElementById('fCancel').addEventListener('click', closeEditForm);
+document.getElementById('btnAdd').addEventListener('click', ()=> openEditForm(null));
+document.getElementById('fabAdd').addEventListener('click', ()=> openEditForm(null));
+
+fSave.addEventListener('click', ()=>{
+  const date = fFecha.value;
+  const course = fCurso.value;
+  const cat = fTipo.value;
+  const title = fTitulo.value.trim();
+  if(!date || !title){
+    alert('Completa al menos la fecha y el título.');
+    return;
+  }
+  if(editingId){
+    const ev = EVENTS.find(x=>x.id===editingId);
+    // El UID se conserva al editar (así reimportar el .ics actualiza en vez de duplicar).
+    if(ev){ ev.date=date; ev.course=course; ev.cat=cat; ev.title=title; ev.seq=(ev.seq||0)+1; }
+  } else {
+    let uid = ICSCore.makeUid(course, date, title);
+    if(EVENTS.some(x=>x.uid===uid)) uid = uid.replace('@', '-' + Date.now().toString(36) + '@');
+    EVENTS.push({id:nextId++, uid, date, course, cat, title, seq:0});
+  }
+  saveLocal();
+  if(date < SEM_MIN || date > SEM_MAX){
+    alert('Ojo: esa fecha cae fuera de agosto–diciembre 2026, así que se guarda pero no se va a ver en el calendario visual.');
+  }
+  rerender();
+  closeEditForm();
+});
+
+fDelete.addEventListener('click', ()=>{
+  if(!editingId) return;
+  const ev = EVENTS.find(x=>x.id===editingId);
+  if(ev && confirm(`¿Eliminar "${ev.title}"?`)){
+    const idx = EVENTS.findIndex(x=>x.id===editingId);
+    if(idx>-1) EVENTS.splice(idx,1);
+    saveLocal();
+    rerender();
+    closeEditForm();
+  }
+});
+
+scrim.addEventListener('click', ()=>{ closeDetail(); closeEditForm(); closeIcsSheet(); });
+
+/* ================= DATOS: carga, guardado local, restablecer ================= */
+function exportData(){
+  return { ...META, courses: COURSES, events: EVENTS.map(({id, ...rest})=> rest) };
+}
+function saveLocal(){
+  try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(exportData())); }
+  catch(e){ alert('No se pudo guardar en este dispositivo. Exporta un respaldo para no perder los cambios.'); }
+}
+function loadLocal(){
+  try{
+    const data = JSON.parse(localStorage.getItem(STORAGE_KEY));
+    return data && Array.isArray(data.events) ? data : null;
+  }catch(e){ return null; }
+}
+function applyData(data){
+  META = { version:data.version, timezone:data.timezone };
+  COURSES = data.courses;
+  EVENTS = data.events.map(ev=> ({...ev, id: nextId++}));
+  renderLegend();
+  renderCourseOptions();
+  renderTimeline();
+  rerender();
+}
+async function fetchOriginal(){
+  const res = await fetch('events.json');
+  if(!res.ok) throw new Error('events.json ' + res.status);
+  return res.json();
+}
+async function boot(){
+  try{
+    applyData(loadLocal() || await fetchOriginal());
+  }catch(e){
+    document.getElementById('upcoming').innerHTML = '<p class="empty-msg">No se pudieron cargar los datos. Revisa la conexión y vuelve a abrir la app.</p>';
+  }
+}
+
+document.getElementById('btnReset').addEventListener('click', async ()=>{
+  if(!confirm('¿Restablecer los datos originales? Se pierden los cambios hechos en este dispositivo.')) return;
+  try{
+    const data = await fetchOriginal();
+    try{ localStorage.removeItem(STORAGE_KEY); }catch(e){}
+    applyData(data);
+  }catch(e){
+    alert('No se pudieron cargar los datos originales. Tus cambios siguen intactos.');
+  }
+});
+
+/* ================= EXPORTAR: respaldo .json y .ics ================= */
+function downloadFile(name, text, type){
+  const blob = new Blob([text], {type});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = name;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(()=> URL.revokeObjectURL(url), 1000);
+}
+
+document.getElementById('btnBackup').addEventListener('click', ()=>{
+  const t = new Date();
+  downloadFile(`calendario-respaldo-${isoLocal(t.getFullYear(), t.getMonth(), t.getDate())}.json`,
+    JSON.stringify(exportData(), null, 2) + '\n', 'application/json');
+});
+
+const icsSheet = document.getElementById('icsSheet');
+const icsList = document.getElementById('icsList');
+function openIcsSheet(){
+  icsList.innerHTML = '';
+  Object.entries(COURSES).forEach(([code,info])=>{
+    const n = EVENTS.filter(ev=>ev.course===code).length;
+    const row = document.createElement('div');
+    row.className='detail-item';
+    row.innerHTML = `<span class="detail-code" style="--c:${info.color}">${code}</span>
+      <div style="flex:1;min-width:0;"><div class="detail-title">${info.name}</div>
+      <div class="detail-course">${n} evento${n===1?'':'s'} · ${code}.ics</div></div>
+      <div class="item-actions"><button class="btn btn-secondary" data-ics="${code}">⬇ Descargar</button></div>`;
+    icsList.appendChild(row);
+  });
+  icsList.querySelectorAll('[data-ics]').forEach(btn=>{
+    btn.addEventListener('click', (e)=>{
+      const code = e.currentTarget.dataset.ics;
+      downloadFile(code + '.ics', ICSCore.buildCalendar(code, exportData(), new Date()), 'text/calendar');
+    });
+  });
+  icsSheet.classList.add('show');
+  scrim.classList.add('show');
+}
+function closeIcsSheet(){
+  icsSheet.classList.remove('show');
+  scrim.classList.remove('show');
+}
+document.getElementById('btnExportIcs').addEventListener('click', openIcsSheet);
+document.getElementById('icsClose').addEventListener('click', closeIcsSheet);
+
+/* ================= ARRANQUE ================= */
+boot();
+if('serviceWorker' in navigator){
+  window.addEventListener('load', ()=> navigator.serviceWorker.register('sw.js'));
+}
+</script></body></html>
