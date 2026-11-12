@@ -369,8 +369,10 @@
     scroll-snap-type:x proximity;scroll-padding-left:46px;overscroll-behavior:contain;
     margin-bottom:22px;
   }
-  .week-grid{width:max(100%,774px);}
-  .wk-row{display:grid;grid-template-columns:46px repeat(7,minmax(104px,1fr));}
+  .week-grid{width:max(100%,var(--gw,774px));}
+  .week-scroll.day{touch-action:pan-y pinch-zoom;}
+  .week-hint{font-size:.66rem;color:var(--ink-soft);margin:-12px 0 18px;text-align:center;}
+  .wk-row{display:grid;grid-template-columns:46px repeat(var(--n,7),minmax(var(--minw,104px),1fr));}
   .wk-head{position:sticky;top:0;z-index:6;background:var(--surface);border-bottom:2px solid var(--ink);}
   .wk-corner{position:sticky;left:0;z-index:7;background:var(--surface);}
   .wk-dh{
@@ -464,18 +466,19 @@
   </div>
 
   <div class="viewbar">
-    <div class="seg" id="viewSeg"><button data-view="month">Mes</button><button data-view="week">Semana</button></div>
+    <div class="seg" id="viewSeg"><button data-view="month">Mes</button><button data-view="week">Semana</button><button data-view="day">Día</button></div>
   </div>
   <div id="months"></div>
 
   <div id="weekView" style="display:none;">
     <div class="week-bar">
-      <button class="btn btn-secondary" id="wkPrev" title="Semana anterior">‹</button>
+      <button class="btn btn-primary" id="wkToday">Hoy</button>
+      <button class="btn btn-secondary" id="wkPrev" title="Anterior">‹</button>
       <div class="week-range" id="wkRange"></div>
-      <button class="btn btn-secondary" id="wkToday">Hoy</button>
-      <button class="btn btn-secondary" id="wkNext" title="Semana siguiente">›</button>
+      <button class="btn btn-secondary" id="wkNext" title="Siguiente">›</button>
     </div>
     <div class="week-scroll" id="weekScroll"></div>
+    <p class="week-hint">Desliza a los lados (o dos dedos en el trackpad, o las flechas ← →) para pasar de día o de semana.</p>
   </div>
 </div>
 
@@ -703,7 +706,7 @@ todayPill.addEventListener('click', ()=>{
   const el = document.querySelector('.day-cell.today');
   if(el) el.scrollIntoView({behavior:'smooth', block:'center'});
 });
-quicknav.appendChild(todayPill);
+quicknav.insertBefore(todayPill, quicknav.firstChild);   // "Hoy" primero: si no, queda fuera de pantalla en el iPhone
 
 /* ================= HERO TIMELINE ================= */
 const timelineEl = document.getElementById('timeline');
@@ -966,8 +969,9 @@ function renderMonths(){
 /* ================= VISTA SEMANA ================= */
 const weekView = document.getElementById('weekView');
 const weekScroll = document.getElementById('weekScroll');
-let weekStart = mondayOf(today);
+let cursor = new Date(today);   // día de referencia: la vista Semana muestra su semana; la vista Día, ese día
 let view = 'month';
+const isGrid = () => view==='week' || view==='day';
 
 // Reparte los bloques que se solapan en columnas (algoritmo por grupos).
 function layoutBlocks(items){
@@ -992,7 +996,9 @@ function layoutBlocks(items){
 
 function renderWeek(){
   const keepL = weekScroll.scrollLeft, keepT = weekScroll.scrollTop;
-  const days = [...Array(7)].map((_,i)=>{ const d = new Date(weekStart); d.setDate(d.getDate()+i); return d; });
+  const single = view==='day';
+  const start = single ? new Date(cursor) : mondayOf(cursor);
+  const days = [...Array(single?1:7)].map((_,i)=>{ const d = new Date(start); d.setDate(d.getDate()+i); return d; });
   const isos = days.map(isoOf);
   const timed = isos.map(iso => (byDate[iso]||[]).filter(e=>e.time));
 
@@ -1004,18 +1010,21 @@ function renderWeek(){
   const rows = maxH - minH;
   const HH = 44;
 
-  const d0 = days[0], d6 = days[6];
+  const d0 = days[0], d6 = days[days.length-1];
   const mn = d => MONTH_NAMES[d.getMonth()].slice(0,3).toLowerCase();
-  const rangeTxt = d0.getMonth()===d6.getMonth()
-    ? `${d0.getDate()}–${d6.getDate()} ${mn(d6)} ${d6.getFullYear()}`
-    : `${d0.getDate()} ${mn(d0)} – ${d6.getDate()} ${mn(d6)} ${d6.getFullYear()}`;
+  const long = fmtDateLong(isos[0]);
+  const rangeTxt = single ? long.charAt(0).toUpperCase() + long.slice(1) + ' ' + d0.getFullYear()
+    : d0.getMonth()===d6.getMonth()
+      ? `${d0.getDate()}–${d6.getDate()} ${mn(d6)} ${d6.getFullYear()}`
+      : `${d0.getDate()} ${mn(d0)} – ${d6.getDate()} ${mn(d6)} ${d6.getFullYear()}`;
   const weekStudy = isos.reduce((s,iso)=> s + studyMin(iso), 0);
-  document.getElementById('wkRange').innerHTML = `${rangeTxt}<small>${weekStudy?`Estudio planificado: ${fmtH(weekStudy)}`:'Sin bloques de estudio esta semana'}</small>`;
+  document.getElementById('wkRange').innerHTML = `${rangeTxt}<small>${weekStudy?`Estudio planificado: ${fmtH(weekStudy)}`:(single?'Sin bloques de estudio este día':'Sin bloques de estudio esta semana')}${isos.includes(todayISO)?' · hoy':''}</small>`;
+  weekScroll.classList.toggle('day', single);
 
-  let html = `<div class="week-grid" style="--rows:${rows};--hh:${HH}px;">`;
+  let html = `<div class="week-grid" style="--rows:${rows};--hh:${HH}px;--n:${days.length};--minw:${single?0:104}px;--gw:${single?0:774}px;">`;
   // cabecera de días
   html += `<div class="wk-row wk-head"><div class="wk-corner"></div>` + days.map((d,i)=>
-    `<div class="wk-dh ${isos[i]===todayISO?'today':''}" data-iso="${isos[i]}">${WEEKDAYS[i].toUpperCase()}<b>${d.getDate()}</b></div>`).join('') + `</div>`;
+    `<div class="wk-dh ${isos[i]===todayISO?'today':''}" data-iso="${isos[i]}">${WEEKDAYS[(d.getDay()+6)%7].toUpperCase()}<b>${d.getDate()}</b></div>`).join('') + `</div>`;
   // fila "todo el día": evaluaciones y entregas sin hora
   html += `<div class="wk-row wk-allday"><div class="wk-ad-label">todo el día</div>` + isos.map(iso=>{
     const chips = (byDate[iso]||[]).filter(e=>e.cat!=='study' && !e.time).map(ev=>
@@ -1068,10 +1077,48 @@ weekScroll.addEventListener('click', e=>{
     openEditForm(null, col.dataset.iso, {cat:'study', start:fmtHM(startMin), end:fmtHM(Math.min(24*60-1, startMin+60))});
   }
 });
-function shiftWeek(n){ weekStart.setDate(weekStart.getDate() + n*7); renderWeek(); positionWeek(); }
-document.getElementById('wkPrev').addEventListener('click', ()=> shiftWeek(-1));
-document.getElementById('wkNext').addEventListener('click', ()=> shiftWeek(1));
-document.getElementById('wkToday').addEventListener('click', ()=>{ weekStart = mondayOf(today); renderWeek(); positionWeek(); });
+// Pasa de día (vista Día) o de semana (vista Semana).
+function shiftView(n){
+  cursor.setDate(cursor.getDate() + n*(view==='day' ? 1 : 7));
+  renderWeek(); positionWeek();
+}
+document.getElementById('wkPrev').addEventListener('click', ()=> shiftView(-1));
+document.getElementById('wkNext').addEventListener('click', ()=> shiftView(1));
+document.getElementById('wkToday').addEventListener('click', ()=>{ cursor = new Date(today); renderWeek(); positionWeek(); });
+
+// Gestos. Solo cuando la grilla no se desplaza horizontalmente por sí sola
+// (vista Día, o Semana en pantalla ancha); si no, el deslizar sigue moviendo las columnas.
+const canSwipe = () => weekScroll.scrollWidth <= weekScroll.clientWidth + 2;
+let tx = 0, ty = 0, tid = null;
+weekScroll.addEventListener('touchstart', e=>{
+  if(e.touches.length!==1){ tid = null; return; }
+  tx = e.touches[0].clientX; ty = e.touches[0].clientY; tid = e.touches[0].identifier;
+}, {passive:true});
+weekScroll.addEventListener('touchend', e=>{
+  const t = [...e.changedTouches].find(t=>t.identifier===tid); tid = null;
+  if(!t || !canSwipe()) return;
+  const dx = t.clientX - tx, dy = t.clientY - ty;
+  if(Math.abs(dx) > 55 && Math.abs(dx) > Math.abs(dy)*1.5){ shiftView(dx < 0 ? 1 : -1); suppressClick = true; setTimeout(()=> suppressClick = false, 350); }
+});
+let suppressClick = false;
+weekScroll.addEventListener('click', e=>{ if(suppressClick){ e.stopPropagation(); e.preventDefault(); } }, true);
+// Trackpad / Magic Mouse: dos dedos a la izquierda = siguiente, a la derecha = anterior.
+let wheelAcc = 0, wheelLocked = false, wheelTimer = null;
+weekScroll.addEventListener('wheel', e=>{
+  if(Math.abs(e.deltaX) <= Math.abs(e.deltaY) || !canSwipe()) return;
+  e.preventDefault();                       // evita que Safari lo tome como "atrás/adelante"
+  clearTimeout(wheelTimer);
+  wheelTimer = setTimeout(()=>{ wheelLocked = false; wheelAcc = 0; }, 160);   // la inercia del gesto no debe pasar dos días
+  if(wheelLocked) return;
+  wheelAcc += e.deltaX;
+  if(Math.abs(wheelAcc) > 70){ shiftView(wheelAcc > 0 ? 1 : -1); wheelLocked = true; wheelAcc = 0; }
+}, {passive:false});
+// Teclado (Mac): flechas izquierda/derecha.
+document.addEventListener('keydown', e=>{
+  if(!isGrid() || document.querySelector('.sheet.show') || /INPUT|SELECT|TEXTAREA/.test((e.target.tagName||''))) return;
+  if(e.key==='ArrowRight'){ e.preventDefault(); shiftView(1); }
+  else if(e.key==='ArrowLeft'){ e.preventDefault(); shiftView(-1); }
+});
 
 function setView(v){
   view = v;
@@ -1079,8 +1126,8 @@ function setView(v){
   document.querySelectorAll('#viewSeg button').forEach(b=> b.classList.toggle('on', b.dataset.view===v));
   monthsEl.style.display = v==='month' ? '' : 'none';
   quicknav.style.display = v==='month' ? '' : 'none';
-  weekView.style.display = v==='week' ? '' : 'none';
-  if(v==='week'){ renderWeek(); positionWeek(); }
+  weekView.style.display = (v==='week' || v==='day') ? '' : 'none';
+  if(v==='week' || v==='day'){ renderWeek(); positionWeek(); }
 }
 document.getElementById('viewSeg').addEventListener('click', e=>{
   const b = e.target.closest('button'); if(b) setView(b.dataset.view);
@@ -1092,7 +1139,7 @@ function rerender(){
   renderUpcoming();
   renderConflicts();
   renderMonths();
-  if(view==='week') renderWeek();
+  if(isGrid()) renderWeek();
 }
 
 /* ================= DETAIL SHEET (view) ================= */
@@ -1500,7 +1547,7 @@ document.getElementById('btnExportIcs').addEventListener('click', openIcsSheet);
 document.getElementById('icsClose').addEventListener('click', closeIcsSheet);
 
 /* ================= ARRANQUE ================= */
-setView(getPref(VIEW_KEY)==='week' ? 'week' : 'month');
+setView(['week','day'].includes(getPref(VIEW_KEY)) ? getPref(VIEW_KEY) : 'month');
 boot();
 if('serviceWorker' in navigator){
   window.addEventListener('load', ()=> navigator.serviceWorker.register('sw.js'));

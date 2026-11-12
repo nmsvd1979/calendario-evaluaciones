@@ -70,7 +70,9 @@ Enlace: **https://nmsvd1979.github.io/calendario-evaluaciones/**
 
 ### Vista Mes y vista Semana
 
-- Selector **Mes | Semana** bajo el encabezado. La app recuerda la última que usaste.
+- Selector **Mes | Semana | Día** bajo el encabezado. La app recuerda la última que usaste.
+- **Hoy:** en Mes es el primer botón de la fila de meses ("Hoy ↓"); en Semana y Día es el botón oscuro de la izquierda de la barra.
+- **Pasar de día o de semana con gestos** (vista Día y vista Semana en pantalla ancha): en el iPhone, desliza el dedo hacia la izquierda (siguiente) o la derecha (anterior); en el Mac, dos dedos hacia los lados sobre el trackpad; o las flechas ← → del teclado. En el iPhone la vista Semana se desplaza por columnas, así que ahí usa los botones ‹ › o la vista Día.
 - **Semana:** columnas lunes a domingo y filas por hora (desde las 07:00). Arriba, en "todo el día", van las evaluaciones y entregas; los eventos con hora (por ejemplo el examen) y tus bloques de estudio se dibujan a su hora. Flechas ‹ › cambian de semana y "Hoy" vuelve a la actual.
 - **Crear un bloque de estudio:** toca un hueco de la semana (queda de 1 h, con el inicio redondeado a 30 min) o usa ＋ Agregar → Tipo "Bloque de estudio". Si el curso es **EDG**, puedes elegir el área (Pers, DyE, TF, DF, FM, MA).
 - **Repetir:** marca "Repetir cada semana", elige los días (L M X J V S D) y la fecha final. Se crea un bloque por día. Al editar o borrar uno de una repetición, el formulario pregunta si es "solo este" o "este y los siguientes".
