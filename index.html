@@ -10,7 +10,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon-180.png">
 <link rel="icon" type="image/svg+xml" href="icons/icon.svg">
-<title>Calendario Académico — 2º Semestre 2026</title>
+<title>Calendario Académico — Semestre 2026 y EdG 2027</title>
 <link href="fonts.css" rel="stylesheet">
 <style>
   :root{
@@ -328,6 +328,96 @@
   }
   .icon-btn:hover{background:var(--line-strong);}
   .sheet-add-row{padding:12px 0 2px;}
+
+  /* ---------- VISTAS, TARJETA EdG, SEMANA ---------- */
+  .viewbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:12px 0 4px;}
+  .seg{display:inline-flex;background:var(--line);border-radius:9px;padding:3px;}
+  .seg button{
+    border:none;background:transparent;font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:.72rem;
+    padding:7px 16px;border-radius:7px;cursor:pointer;color:var(--ink-soft);
+  }
+  .seg button.on{background:var(--ink);color:#fff;}
+  .up-rel{font-family:'IBM Plex Mono',monospace;font-size:.62rem;font-weight:600;color:var(--ink-soft);white-space:nowrap;text-align:right;}
+  .edg-card{margin:20px 0 0;border-left:5px solid var(--c);}
+  .edg-top{display:flex;gap:16px;align-items:center;flex-wrap:wrap;}
+  .edg-count{font-family:'Fraunces',serif;font-weight:700;font-size:2.3rem;line-height:1;color:var(--c);}
+  .edg-count small{display:block;font-family:'IBM Plex Mono',monospace;font-size:.6rem;font-weight:700;letter-spacing:.08em;color:var(--ink-soft);margin-top:4px;}
+  .edg-info{flex:1;min-width:200px;font-size:.84rem;}
+  .edg-info b{font-weight:600;}
+  .edg-reg{font-size:.78rem;color:var(--ink-soft);margin-top:3px;}
+  .edg-areas{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px;padding-top:12px;border-top:1px solid var(--line);}
+  .edg-area{display:inline-flex;align-items:center;gap:6px;font-size:.74rem;background:#FAFBFC;border:1px solid var(--line);border-radius:999px;padding:3px 10px 3px 3px;}
+  .edg-area.zero{color:var(--ink-soft);}
+  .edg-note{font-size:.68rem;color:var(--ink-soft);margin:8px 0 0;}
+  .month-head{cursor:pointer;}
+  .chev{display:inline-block;width:1em;color:var(--ink-soft);font-size:.8rem;}
+  .month-card.collapsed{padding-bottom:12px;}
+  .month-card.collapsed .month-head{border-bottom:none;margin-bottom:0;padding-bottom:0;}
+  .month-card.collapsed .weekday-row, .month-card.collapsed .grid{display:none;}
+  .study-line{
+    font-family:'IBM Plex Mono',monospace;font-size:.56rem;font-weight:600;color:var(--ink-soft);
+    background:var(--line);border-radius:4px;padding:1px 4px;align-self:flex-start;white-space:nowrap;
+  }
+  .detail-time{font-family:'IBM Plex Mono',monospace;font-size:.7rem;font-weight:600;color:var(--ink-soft);margin-left:6px;}
+  .week-bar{display:flex;align-items:center;gap:6px;margin:12px 0 10px;}
+  .week-range{font-family:'Fraunces',serif;font-weight:600;font-size:1.05rem;flex:1;min-width:0;line-height:1.15;}
+  .week-range small{display:block;font-family:'IBM Plex Mono',monospace;font-weight:500;font-size:.64rem;color:var(--ink-soft);}
+  .week-bar .btn{padding:8px 11px;flex-shrink:0;}
+  .week-scroll{
+    background:var(--surface);border:1px solid var(--line);border-radius:14px;
+    overflow:auto;max-height:calc(100vh - 250px);min-height:380px;
+    scroll-snap-type:x proximity;scroll-padding-left:46px;overscroll-behavior:contain;
+    margin-bottom:22px;
+  }
+  .week-grid{width:max(100%,774px);}
+  .wk-row{display:grid;grid-template-columns:46px repeat(7,minmax(104px,1fr));}
+  .wk-head{position:sticky;top:0;z-index:6;background:var(--surface);border-bottom:2px solid var(--ink);}
+  .wk-corner{position:sticky;left:0;z-index:7;background:var(--surface);}
+  .wk-dh{
+    text-align:center;padding:7px 2px 6px;cursor:pointer;border-left:1px solid var(--line);
+    font-family:'IBM Plex Mono',monospace;font-size:.62rem;font-weight:700;color:var(--ink-soft);letter-spacing:.06em;
+  }
+  .wk-dh b{display:block;font-family:'Fraunces',serif;font-size:1.15rem;font-weight:600;color:var(--ink);letter-spacing:0;}
+  .wk-dh.today b{color:#fff;background:var(--ink);border-radius:999px;width:30px;margin:0 auto;}
+  .wk-allday{border-bottom:1px solid var(--line-strong);background:#FAFBFC;}
+  .wk-ad-label,.wk-hour-col{
+    position:sticky;left:0;z-index:3;background:var(--surface);
+    font-family:'IBM Plex Mono',monospace;font-size:.56rem;font-weight:600;color:var(--ink-soft);
+  }
+  .wk-ad-label{padding:8px 4px 0;background:#FAFBFC;line-height:1.2;}
+  .wk-ad{border-left:1px solid var(--line);padding:4px 3px;display:flex;flex-direction:column;gap:3px;min-height:30px;cursor:pointer;min-width:0;}
+  .wk-hour-col{position:sticky;height:calc(var(--rows) * var(--hh));}
+  .wk-hour-col span{position:absolute;right:5px;transform:translateY(-50%);}
+  .wk-col{
+    position:relative;border-left:1px solid var(--line);scroll-snap-align:start;min-width:0;
+    height:calc(var(--rows) * var(--hh));
+    background-image:repeating-linear-gradient(to bottom,transparent 0,transparent calc(var(--hh) - 1px),var(--line) calc(var(--hh) - 1px),var(--line) var(--hh));
+  }
+  .wk-col.today{background-color:#FFF9EC;}
+  .wk-block{
+    position:absolute;box-sizing:border-box;border-radius:6px;padding:3px 5px;overflow:hidden;cursor:pointer;
+    background:color-mix(in srgb, var(--c) 22%, white);border-left:3px solid var(--c);
+    font-size:.64rem;line-height:1.2;color:var(--ink);
+  }
+  .wk-block.eval{background:color-mix(in srgb, var(--c) 30%, white);border:1px solid var(--c);border-left-width:3px;font-weight:700;}
+  .wk-block .wk-t{display:block;font-family:'IBM Plex Mono',monospace;font-size:.56rem;font-weight:600;color:var(--ink-soft);}
+  .wk-block b{font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:.58rem;margin-right:3px;}
+  .wk-now{position:absolute;left:0;right:0;border-top:2px solid var(--ec);z-index:2;pointer-events:none;}
+  .wk-now::before{content:"";position:absolute;left:-4px;top:-5px;width:8px;height:8px;border-radius:50%;background:var(--ec);}
+  .form-2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  .form-check{display:flex;align-items:center;gap:8px;font-size:.88rem;cursor:pointer;margin:0 0 10px;}
+  .form-check input{width:auto;}
+  .dias{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;}
+  .dias label{
+    display:inline-flex;align-items:center;justify-content:center;width:38px;height:34px;border-radius:8px;
+    border:1px solid var(--line-strong);background:#fff;cursor:pointer;margin:0;
+    font-family:'IBM Plex Mono',monospace;font-size:.7rem;font-weight:700;color:var(--ink);text-transform:none;letter-spacing:0;
+  }
+  .dias label:has(input:checked){background:var(--ink);color:#fff;border-color:var(--ink);}
+  .dias input{position:absolute;opacity:0;pointer-events:none;}
+  .more-list{display:flex;flex-direction:column;gap:8px;}
+  .more-list .btn{justify-content:flex-start;padding:12px 15px;font-size:.78rem;}
+  #editSheet{max-height:88vh;}
 </style>
 </head>
 <body>
@@ -343,17 +433,17 @@
   <div id="quicknav"></div>
 
   <div class="hero">
-    <div class="eyebrow">Ingeniería Comercial UC · 2º Semestre 2026</div>
+    <div class="eyebrow">Ingeniería Comercial UC · 2º Semestre 2026 · Examen de Grado 2027</div>
     <h1>Calendario de Evaluaciones y Entregas</h1>
     <div class="hero-actions">
-      <button class="btn btn-primary" id="btnExportIcs">⬇ Exportar .ics</button>
-      <button class="btn btn-secondary" id="btnAdd">＋ Agregar evento</button>
-      <button class="btn btn-secondary" id="btnBackup">⬇ Exportar respaldo (.json)</button>
-      <button class="btn btn-secondary" id="btnReset">↺ Restablecer datos originales</button>
+      <button class="btn btn-primary" id="btnAdd">＋ Agregar</button>
+      <button class="btn btn-secondary" id="btnMore">⋯ Más</button>
     </div>
-    <p class="form-hint">Puedes editar o borrar haciendo clic en un día. Los cambios se guardan en este dispositivo. Exporta el .ics para actualizar el Calendario de Apple, o un respaldo para no perderlos.</p>
+    <p class="form-hint">Toca un día para ver, editar o agregar. Los cambios se guardan en este dispositivo; en “Más” están el .ics para Apple y los respaldos.</p>
     <div class="timeline" id="timeline"></div>
   </div>
+
+  <div class="panel edg-card" id="edgCard" style="display:none;"></div>
 
   <div class="panel" id="upcoming-panel">
     <h2>Próximas evaluaciones y entregas</h2>
@@ -373,7 +463,20 @@
     </div>
   </div>
 
+  <div class="viewbar">
+    <div class="seg" id="viewSeg"><button data-view="month">Mes</button><button data-view="week">Semana</button></div>
+  </div>
   <div id="months"></div>
+
+  <div id="weekView" style="display:none;">
+    <div class="week-bar">
+      <button class="btn btn-secondary" id="wkPrev" title="Semana anterior">‹</button>
+      <div class="week-range" id="wkRange"></div>
+      <button class="btn btn-secondary" id="wkToday">Hoy</button>
+      <button class="btn btn-secondary" id="wkNext" title="Semana siguiente">›</button>
+    </div>
+    <div class="week-scroll" id="weekScroll"></div>
+  </div>
 </div>
 
 <div id="detail" class="sheet">
@@ -400,23 +503,64 @@
       <label>Curso</label>
       <select id="fCurso"></select>
     </div>
+    <div class="form-row" id="rowArea" style="display:none;">
+      <label>Área</label>
+      <select id="fArea"></select>
+    </div>
     <div class="form-row">
       <label>Tipo</label>
       <select id="fTipo">
         <option value="eval">Evaluación</option>
         <option value="deadline">Entrega / hito</option>
+        <option value="study">Bloque de estudio</option>
       </select>
     </div>
+    <div class="form-2">
+      <div class="form-row"><label id="lblIni">Hora inicio (opcional)</label><input type="time" id="fIni"></div>
+      <div class="form-row"><label id="lblFin">Hora fin (opcional)</label><input type="time" id="fFin"></div>
+    </div>
     <div class="form-row">
-      <label>Título</label>
+      <label id="lblTitulo">Título</label>
       <input type="text" id="fTitulo" placeholder="Ej: Prueba 2 (25%)">
     </div>
-    <p class="form-hint">Solo aparece en el calendario si la fecha cae entre agosto de 2026 y diciembre de 2027 (igual se guarda si no).</p>
+    <div id="rowRepetir" style="display:none;">
+      <label class="form-check"><input type="checkbox" id="fRepetir"> Repetir cada semana</label>
+      <div id="repBox" style="display:none;">
+        <div class="dias" id="fDias"></div>
+        <div class="form-row"><label>Hasta (inclusive)</label><input type="date" id="fHasta"></div>
+        <p class="form-hint" id="repCount"></p>
+      </div>
+    </div>
+    <div class="form-row" id="rowAlcance" style="display:none;">
+      <label>Este bloque pertenece a una repetición. Aplicar a</label>
+      <select id="fAlcance">
+        <option value="one">Solo este bloque</option>
+        <option value="next">Este y los siguientes</option>
+      </select>
+    </div>
+    <p class="form-hint">Solo aparece en el calendario si la fecha cae entre agosto de 2026 y diciembre de 2027 (igual se guarda si no). Los bloques de estudio no se exportan al calendario de Apple.</p>
     <div class="form-actions">
       <button class="btn btn-primary" id="fSave">Guardar</button>
       <button class="btn btn-secondary" id="fCancel">Cancelar</button>
-      <button class="btn btn-danger" id="fDelete" style="display:none;">Eliminar evento</button>
+      <button class="btn btn-danger" id="fDelete" style="display:none;">Eliminar</button>
     </div>
+  </div>
+</div>
+
+<div id="moreSheet" class="sheet">
+  <div class="detail-inner">
+    <div class="detail-top">
+      <div class="detail-date" style="text-transform:none;">Más opciones</div>
+      <button class="detail-close" id="moreClose">✕</button>
+    </div>
+    <div class="more-list">
+      <button class="btn btn-secondary" id="btnExportIcs">⬇ Exportar .ics (Calendario de Apple)</button>
+      <button class="btn btn-secondary" id="btnBackup">⬇ Exportar respaldo (.json)</button>
+      <button class="btn btn-secondary" id="btnImport">⬆ Importar respaldo (.json)</button>
+      <button class="btn btn-secondary" id="btnReset">↺ Restablecer datos originales</button>
+    </div>
+    <p class="form-hint" style="margin-top:14px;">El iPhone y el Mac no se sincronizan entre sí: para llevar tus bloques de uno a otro, exporta un respaldo y súbelo en el otro con “Importar respaldo”.</p>
+    <input type="file" id="fileImport" accept=".json,application/json" style="display:none;">
   </div>
 </div>
 
@@ -438,9 +582,11 @@
 // Los datos iniciales salen de events.json (fuente única, la misma que usan
 // los .ics). Los cambios hechos en la app se guardan en este dispositivo.
 const STORAGE_KEY = 'calendario-uc-2026s2:v1';
-let META = { version:1, timezone:'America/Santiago' };
-let COURSES = {};   // { FS:{name,color}, ... }
-let EVENTS = [];    // cat: 'eval' | 'deadline'; "time" opcional {start,end}
+const VIEW_KEY = 'calendario-uc:vista';
+let META = { version:2, timezone:'America/Santiago' };
+let COURSES = {};   // { FS:{name,color}, EDG:{..., areas:[...]} }
+let EVENTS = [];    // cat: 'eval' | 'deadline' | 'study'; "time" {start,end} opcional (obligatorio en 'study')
+let BASE_UIDS = []; // UID de events.json ya vistos por este dispositivo (para sumar solo lo nuevo)
 
 // Agosto 2026 a diciembre 2027 (2027 completo, para ir agregando eventos).
 const MONTH_NAMES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
@@ -452,24 +598,32 @@ for(let y=2026; y<=2027; y++){
   }
 }
 const WEEKDAYS = ['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'];
-const CAT_LABEL = {eval:'EVAL', deadline:'ENTREGA', class:''};
-const CAT_RANK  = {eval:0, deadline:1, class:2};
+const WD1 = ['L','M','X','J','V','S','D'];
+const CAT_LABEL = {eval:'EVAL', deadline:'ENTREGA', study:'ESTUDIO'};
+const CAT_RANK  = {eval:0, deadline:1, study:2};
 const SEM_MIN = '2026-08-01', SEM_MAX = '2027-12-31';
+const WK_MIN_H = 7, WK_MAX_H = 24;
 
 let nextId = 1;
 
+/* ================= UTILIDADES ================= */
+function esc(s){
+  return String(s ?? '').replace(/[&<>"']/g, c=> ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
 function isoLocal(y,m,day){
   return y + '-' + String(m+1).padStart(2,'0') + '-' + String(day).padStart(2,'0');
 }
-
-let byDate = {};
-function rebuildIndex(){
-  byDate = {};
-  EVENTS.forEach(ev=>{ (byDate[ev.date] = byDate[ev.date] || []).push(ev); });
-  Object.values(byDate).forEach(list=> list.sort((a,b)=> CAT_RANK[a.cat]-CAT_RANK[b.cat] || a.course.localeCompare(b.course)));
-}
-
+function isoOf(d){ return isoLocal(d.getFullYear(), d.getMonth(), d.getDate()); }
 function parseISO(iso){ return new Date(iso+'T00:00:00'); }
+function addDaysISO(iso, n){ const d = parseISO(iso); d.setDate(d.getDate()+n); return isoOf(d); }
+function daysBetween(a, b){ return Math.round((parseISO(b) - parseISO(a)) / 86400000); }
+function mondayOf(d){ const x = new Date(d); x.setHours(0,0,0,0); x.setDate(x.getDate() - ((x.getDay()+6)%7)); return x; }
+function toMin(hm){ const [h,m] = hm.split(':').map(Number); return h*60+m; }
+function fmtHM(min){ return String(Math.floor(min/60)).padStart(2,'0') + ':' + String(min%60).padStart(2,'0'); }
+function fmtH(min){
+  const h = min/60;
+  return (Number.isInteger(h) ? String(h) : h.toFixed(1).replace('.',',')) + ' h';
+}
 function fmtDateLong(iso){
   return parseISO(iso).toLocaleDateString('es-CL',{weekday:'long',day:'numeric',month:'long'});
 }
@@ -479,6 +633,41 @@ function fmtDateShort(iso){
 function isSameDay(a,b){
   return a.getFullYear()===b.getFullYear() && a.getMonth()===b.getMonth() && a.getDate()===b.getDate();
 }
+function getPref(k){ try{ return localStorage.getItem(k); }catch(e){ return null; } }
+function setPref(k,v){ try{ localStorage.setItem(k,v); }catch(e){} }
+
+const today = new Date(); today.setHours(0,0,0,0);
+const todayISO = isoOf(today);
+
+function areaOf(ev){
+  const c = COURSES[ev.course];
+  return c && c.areas && ev.area ? c.areas.find(a=>a.id===ev.area) : null;
+}
+function evTitle(ev){
+  if(ev.title) return ev.title;
+  const a = areaOf(ev);
+  return ev.cat==='study' ? (a ? 'Estudio ' + a.code : 'Estudio') : '';
+}
+function timeText(ev){ return ev.time ? ev.time.start + '–' + ev.time.end : ''; }
+// La hora al inicio del chip solo si el título no la trae ya (p. ej. el examen de PP).
+function chipTime(ev){ return ev.time && !ev.title.includes(ev.time.start) ? ev.time.start + ' ' : ''; }
+function relDays(iso){
+  const n = daysBetween(todayISO, iso);
+  return n===0 ? 'hoy' : n===1 ? 'mañana' : n>1 ? `en ${n} días` : `hace ${-n} días`;
+}
+
+let byDate = {};
+function rebuildIndex(){
+  byDate = {};
+  EVENTS.forEach(ev=>{ (byDate[ev.date] = byDate[ev.date] || []).push(ev); });
+  Object.values(byDate).forEach(list=> list.sort((a,b)=>
+    CAT_RANK[a.cat]-CAT_RANK[b.cat] ||
+    (a.time?a.time.start:'').localeCompare(b.time?b.time.start:'') ||
+    a.course.localeCompare(b.course)));
+}
+const marked = iso => (byDate[iso]||[]).filter(e=>e.cat!=='study');           // eval y entregas
+const studyMin = iso => (byDate[iso]||[]).filter(e=>e.cat==='study')
+  .reduce((s,e)=> s + toMin(e.time.end) - toMin(e.time.start), 0);
 
 /* ================= MASTHEAD LEGEND ================= */
 const legendStrip = document.getElementById('legendStrip');
@@ -488,7 +677,7 @@ function renderLegend(){
     const chip = document.createElement('div');
     chip.className='legend-chip';
     chip.style.setProperty('--c', info.color);
-    chip.innerHTML = `<span class="code-badge">${code}</span><span>${info.name}</span>`;
+    chip.innerHTML = `<span class="code-badge">${esc(code)}</span><span>${esc(info.name)}</span>`;
     legendStrip.appendChild(chip);
   });
 }
@@ -500,7 +689,9 @@ MONTHS.forEach(mo=>{
   pill.className='nav-pill';
   pill.textContent = mo.short;
   pill.addEventListener('click', ()=>{
-    document.getElementById(mo.id).scrollIntoView({behavior:'smooth', block:'start'});
+    const card = document.getElementById(mo.id);
+    if(card.classList.contains('collapsed')) toggleMonth(card);
+    card.scrollIntoView({behavior:'smooth', block:'start'});
   });
   quicknav.appendChild(pill);
 });
@@ -515,14 +706,14 @@ todayPill.addEventListener('click', ()=>{
 quicknav.appendChild(todayPill);
 
 /* ================= HERO TIMELINE ================= */
-const today = new Date(); today.setHours(0,0,0,0);
 const timelineEl = document.getElementById('timeline');
 function clampLabelPct(p){ return Math.max(3, Math.min(97, p)); }
 
 function renderTimeline(){
   timelineEl.innerHTML = '';
-  if(!EVENTS.length) return;
-  const allDates = EVENTS.map(e=>parseISO(e.date));
+  const marks = EVENTS.filter(e=>e.cat!=='study');
+  if(!marks.length) return;
+  const allDates = marks.map(e=>parseISO(e.date));
   const semStart = new Date(Math.min(...allDates));
   const semEnd   = new Date(Math.max(...allDates));
   const totalSpan = semEnd - semStart;
@@ -558,25 +749,75 @@ function renderTimeline(){
   }
 }
 
+/* ================= TARJETA EXAMEN DE GRADO ================= */
+const edgCard = document.getElementById('edgCard');
+function renderEdg(){
+  const c = COURSES.EDG;
+  const exams = EVENTS.filter(e=>e.course==='EDG' && e.cat==='eval').sort((a,b)=>a.date.localeCompare(b.date));
+  const next = exams.find(e=>e.date >= todayISO);
+  if(!c || !next){ edgCard.style.display='none'; return; }
+  edgCard.style.display='';
+  edgCard.style.setProperty('--c', c.color);
+
+  const days = daysBetween(todayISO, next.date);
+  const w = Math.floor(days/7), r = days%7;
+  const first = exams[0].date, last = exams[exams.length-1].date;
+  const rangeTxt = first===last ? fmtDateShort(first)
+    : (parseISO(first).getMonth()===parseISO(last).getMonth()
+        ? `${parseISO(first).getDate()}–${parseISO(last).getDate()} ${MONTH_NAMES[parseISO(last).getMonth()].slice(0,3).toLowerCase()}`
+        : `${fmtDateShort(first)} – ${fmtDateShort(last)}`) + ' ' + parseISO(last).getFullYear();
+
+  const reg = EVENTS.filter(e=>e.course==='EDG' && e.cat==='deadline' && /inscripci/i.test(e.title)).sort((a,b)=>a.date.localeCompare(b.date));
+  let regTxt = '';
+  if(reg.length){
+    const open = reg[0].date, close = reg[reg.length-1].date;
+    regTxt = todayISO < open ? `Inscripción abre el ${fmtDateShort(open)} (${relDays(open)}) y cierra el ${fmtDateShort(close)}.`
+      : todayISO <= close ? `<b>Inscripción abierta:</b> cierra el ${fmtDateShort(close)} (${relDays(close)}).`
+      : `Inscripción cerrada el ${fmtDateShort(close)}.`;
+  }
+
+  // Horas de estudio planificadas esta semana, por área (planificado, no avance real).
+  const mon = mondayOf(today), weekISOs = [...Array(7)].map((_,i)=> addDaysISO(isoOf(mon), i));
+  const study = EVENTS.filter(e=>e.cat==='study' && e.course==='EDG' && weekISOs.includes(e.date));
+  const minBy = {}; let noArea = 0;
+  study.forEach(e=>{ const m = toMin(e.time.end)-toMin(e.time.start); if(e.area) minBy[e.area]=(minBy[e.area]||0)+m; else noArea+=m; });
+  const areaChips = (c.areas||[]).map(a=>{
+    const m = minBy[a.id]||0;
+    return `<span class="edg-area ${m?'':'zero'}" title="${esc(a.name)}"><span class="code-badge" style="--c:${c.color}">${esc(a.code)}</span>${m?fmtH(m):'0 h'}</span>`;
+  }).join('') + (noArea ? `<span class="edg-area"><span class="code-badge" style="--c:${c.color}">—</span>${fmtH(noArea)}</span>` : '');
+
+  edgCard.innerHTML = `
+    <div class="edg-top">
+      <div class="edg-count">${days}<small>${days===1?'DÍA':'DÍAS'}</small></div>
+      <div class="edg-info">
+        <b>Examen de Grado · ${rangeTxt}</b> — faltan ${w} semana${w===1?'':'s'}${r?` y ${r} día${r===1?'':'s'}`:''}.
+        ${regTxt?`<div class="edg-reg">${regTxt}</div>`:''}
+      </div>
+    </div>
+    <div class="edg-areas">${areaChips}</div>
+    <p class="edg-note">Horas de estudio planificadas esta semana por área. Es lo que agendaste aquí, no tu avance real.</p>`;
+}
+
 /* ================= UPCOMING ================= */
 function renderUpcoming(){
   const upcoming = EVENTS
     .filter(ev => (ev.cat==='eval' || ev.cat==='deadline'))
-    .filter(ev => parseISO(ev.date) >= today)
-    .sort((a,b)=> a.date.localeCompare(b.date))
+    .filter(ev => ev.date >= todayISO)
+    .sort((a,b)=> a.date.localeCompare(b.date) || (a.time?a.time.start:'').localeCompare(b.time?b.time.start:''))
     .slice(0,6);
 
   const upcomingEl = document.getElementById('upcoming');
   upcomingEl.innerHTML = '';
   if(upcoming.length===0){
-    upcomingEl.innerHTML = '<p class="empty-msg">Ya pasaron todas las evaluaciones registradas para este semestre.</p>';
+    upcomingEl.innerHTML = '<p class="empty-msg">Ya pasaron todas las evaluaciones registradas.</p>';
   } else {
     upcoming.forEach(ev=>{
       const row = document.createElement('div');
       row.className='up-item';
       row.innerHTML = `<span class="up-date">${fmtDateShort(ev.date)}</span>
-        <span class="code-badge" style="--c:${COURSES[ev.course].color}">${ev.course}</span>
-        <span class="up-title">${ev.cat==='eval' ? '<span class="tag-inline">EVAL</span>' : '<span class="tag-inline">ENTREGA</span>'}${ev.title}</span>`;
+        <span class="code-badge" style="--c:${COURSES[ev.course].color}">${esc(ev.course)}</span>
+        <span class="up-title"><span class="tag-inline">${CAT_LABEL[ev.cat]}</span>${esc(ev.title)}</span>
+        <span class="up-rel">${relDays(ev.date)}${ev.time?' · '+ev.time.start:''}</span>`;
       upcomingEl.appendChild(row);
     });
   }
@@ -585,7 +826,7 @@ function renderUpcoming(){
 /* ================= CONFLICTS ================= */
 function renderConflicts(){
   const importantByDate = {};
-  EVENTS.filter(ev=>ev.cat!=='class').forEach(ev=>{
+  EVENTS.filter(ev=>ev.cat!=='study').forEach(ev=>{
     (importantByDate[ev.date] = importantByDate[ev.date] || []).push(ev);
   });
   const conflictDates = Object.keys(importantByDate)
@@ -601,7 +842,7 @@ function renderConflicts(){
       const evs = importantByDate[d];
       const row = document.createElement('div');
       row.className='conflict-item';
-      const codes = evs.map(e=>`<span class="code-badge" style="--c:${COURSES[e.course].color}">${e.course}</span>`).join('');
+      const codes = [...new Set(evs.map(e=>e.course))].map(c=>`<span class="code-badge" style="--c:${COURSES[c].color}">${esc(c)}</span>`).join('');
       row.innerHTML = `<span class="conflict-date">${fmtDateShort(d)}</span><span class="conflict-codes">${codes}</span>`;
       conflictsEl.appendChild(row);
     });
@@ -609,15 +850,27 @@ function renderConflicts(){
 }
 
 /* ================= FORMAT KEY (static) ================= */
-const legendKeyEl = document.getElementById('legendKey');
-legendKeyEl.innerHTML = `
+document.getElementById('legendKey').innerHTML = `
   <div class="key-row"><span class="key-swatch" style="background:var(--ink)">FS</span> Sigla del curso siempre visible, sin recortar</div>
   <div class="key-row"><span class="key-swatch" style="background:var(--ink);font-size:.52rem;">EVAL</span> Control, prueba, examen o presentación evaluada</div>
   <div class="key-row"><span class="key-swatch" style="background:var(--ink);font-size:.5rem;">ENTREGA</span> Hito o entrega sin nota de prueba directa</div>
+  <div class="key-row"><span class="key-swatch" style="background:var(--ink);font-size:.5rem;">ESTUDIO</span> Bloque de estudio con hora (vista Semana)</div>
 `;
 
-/* ================= MONTH GRIDS ================= */
+/* ================= VISTA MES ================= */
 const monthsEl = document.getElementById('months');
+const monthOverride = {};   // id -> true (abierto) / false (plegado), mientras dura la sesión
+
+function monthDefaultOpen(y,m){
+  const first = isoLocal(y,m,1), last = isoLocal(y,m,new Date(y,m+1,0).getDate());
+  if(todayISO >= first && todayISO <= last) return true;                 // mes actual
+  return EVENTS.some(e=> e.date >= first && e.date <= last && e.date >= todayISO); // tiene algo por venir
+}
+function toggleMonth(card){
+  const collapsed = card.classList.toggle('collapsed');
+  monthOverride[card.id] = !collapsed;
+  const chev = card.querySelector('.chev'); if(chev) chev.textContent = collapsed ? '▸' : '▾';
+}
 
 function renderMonths(){
   monthsEl.innerHTML = '';
@@ -625,25 +878,25 @@ function renderMonths(){
     const card = document.createElement('div');
     card.className='month-card';
     card.id = id;
+    const open = id in monthOverride ? monthOverride[id] : monthDefaultOpen(y,m);
+    if(!open) card.classList.add('collapsed');
 
     const firstOfMonth = new Date(y,m,1);
     const daysInMonth = new Date(y,m+1,0).getDate();
     let startIdx = firstOfMonth.getDay();
     startIdx = (startIdx+6)%7;
 
-    const monthEvals = EVENTS.filter(ev=>{
-      const d = parseISO(ev.date);
-      return d.getFullYear()===y && d.getMonth()===m && ev.cat==='eval';
-    }).length;
-    const monthDeadlines = EVENTS.filter(ev=>{
-      const d = parseISO(ev.date);
-      return d.getFullYear()===y && d.getMonth()===m && ev.cat==='deadline';
-    }).length;
+    const inMonth = ev => { const d = parseISO(ev.date); return d.getFullYear()===y && d.getMonth()===m; };
+    const monthEvals = EVENTS.filter(ev=> inMonth(ev) && ev.cat==='eval').length;
+    const monthDeadlines = EVENTS.filter(ev=> inMonth(ev) && ev.cat==='deadline').length;
+    const monthStudy = EVENTS.filter(ev=> inMonth(ev) && ev.cat==='study')
+      .reduce((s,e)=> s + toMin(e.time.end)-toMin(e.time.start), 0);
 
     const head = document.createElement('div');
     head.className='month-head';
-    head.innerHTML = `<span class="month-name">${label} <span class="month-year">${y}</span></span>
-      <span class="month-stats">${monthEvals} EVAL · ${monthDeadlines} ENTREGA</span>`;
+    head.innerHTML = `<span class="month-name"><span class="chev">${open?'▾':'▸'}</span>${label} <span class="month-year">${y}</span></span>
+      <span class="month-stats">${monthEvals} EVAL · ${monthDeadlines} ENTREGA${monthStudy?` · ${fmtH(monthStudy)} ESTUDIO`:''}</span>`;
+    head.addEventListener('click', ()=> toggleMonth(card));
     card.appendChild(head);
 
     const wdRow = document.createElement('div');
@@ -665,7 +918,7 @@ function renderMonths(){
       const iso = isoLocal(y,m,day);  // fecha local: toISOString() corre el día al este de UTC
       const cell = document.createElement('div');
       cell.className='day-cell has-events';
-      const dayEvents = byDate[iso] || [];
+      const dayEvents = marked(iso);
       const isToday = isSameDay(dateObj, today);
       if(isToday) cell.classList.add('today');
 
@@ -674,13 +927,11 @@ function renderMonths(){
       numRow.innerHTML = `<span class="day-num">${day}</span>${isToday?'<span class="today-tag">HOY</span>':''}`;
       cell.appendChild(numRow);
 
-      const shown = dayEvents.slice(0,3);
-      shown.forEach(ev=>{
+      dayEvents.slice(0,3).forEach(ev=>{
         const chip = document.createElement('div');
         chip.className = `chip ${ev.cat}`;
         chip.style.setProperty('--c', COURSES[ev.course].color);
-        const catTag = CAT_LABEL[ev.cat] ? `<span class="cat-tag">${CAT_LABEL[ev.cat]}</span>` : '';
-        chip.innerHTML = `<span class="chip-code">${ev.course}</span><span class="chip-text">${ev.title}</span>${catTag}`;
+        chip.innerHTML = `<span class="chip-code">${esc(ev.course)}</span><span class="chip-text">${esc(chipTime(ev)+ev.title)}</span><span class="cat-tag">${CAT_LABEL[ev.cat]}</span>`;
         cell.appendChild(chip);
       });
       if(dayEvents.length>3){
@@ -688,6 +939,14 @@ function renderMonths(){
         more.className='chip-more';
         more.textContent = `+${dayEvents.length-3} más`;
         cell.appendChild(more);
+      }
+      const sm = studyMin(iso);
+      if(sm){
+        const line = document.createElement('div');
+        line.className='study-line';
+        line.textContent = fmtH(sm);
+        line.title = fmtH(sm) + ' de estudio';
+        cell.appendChild(line);
       }
 
       cell.addEventListener('click', ()=>{
@@ -704,11 +963,136 @@ function renderMonths(){
   todayPill.style.display = document.querySelector('.day-cell.today') ? 'inline-block' : 'none';
 }
 
+/* ================= VISTA SEMANA ================= */
+const weekView = document.getElementById('weekView');
+const weekScroll = document.getElementById('weekScroll');
+let weekStart = mondayOf(today);
+let view = 'month';
+
+// Reparte los bloques que se solapan en columnas (algoritmo por grupos).
+function layoutBlocks(items){
+  items.sort((a,b)=> a.s-b.s || b.e-a.e);
+  let group = [], groupEnd = -1;
+  const flush = ()=>{
+    const cols = [];
+    group.forEach(it=>{
+      let c = cols.findIndex(end => end <= it.s);
+      if(c<0){ c = cols.length; cols.push(0); }
+      cols[c] = it.e; it.col = c;
+    });
+    group.forEach(it=> it.n = cols.length);
+  };
+  items.forEach(it=>{
+    if(group.length && it.s >= groupEnd){ flush(); group = []; groupEnd = -1; }
+    group.push(it); groupEnd = Math.max(groupEnd, it.e);
+  });
+  if(group.length) flush();
+  return items;
+}
+
+function renderWeek(){
+  const keepL = weekScroll.scrollLeft, keepT = weekScroll.scrollTop;
+  const days = [...Array(7)].map((_,i)=>{ const d = new Date(weekStart); d.setDate(d.getDate()+i); return d; });
+  const isos = days.map(isoOf);
+  const timed = isos.map(iso => (byDate[iso]||[]).filter(e=>e.time));
+
+  let minH = WK_MIN_H, maxH = WK_MAX_H;
+  timed.flat().forEach(e=>{
+    minH = Math.min(minH, Math.floor(toMin(e.time.start)/60));
+    maxH = Math.max(maxH, Math.min(24, Math.ceil(toMin(e.time.end)/60)));
+  });
+  const rows = maxH - minH;
+  const HH = 44;
+
+  const d0 = days[0], d6 = days[6];
+  const mn = d => MONTH_NAMES[d.getMonth()].slice(0,3).toLowerCase();
+  const rangeTxt = d0.getMonth()===d6.getMonth()
+    ? `${d0.getDate()}–${d6.getDate()} ${mn(d6)} ${d6.getFullYear()}`
+    : `${d0.getDate()} ${mn(d0)} – ${d6.getDate()} ${mn(d6)} ${d6.getFullYear()}`;
+  const weekStudy = isos.reduce((s,iso)=> s + studyMin(iso), 0);
+  document.getElementById('wkRange').innerHTML = `${rangeTxt}<small>${weekStudy?`Estudio planificado: ${fmtH(weekStudy)}`:'Sin bloques de estudio esta semana'}</small>`;
+
+  let html = `<div class="week-grid" style="--rows:${rows};--hh:${HH}px;">`;
+  // cabecera de días
+  html += `<div class="wk-row wk-head"><div class="wk-corner"></div>` + days.map((d,i)=>
+    `<div class="wk-dh ${isos[i]===todayISO?'today':''}" data-iso="${isos[i]}">${WEEKDAYS[i].toUpperCase()}<b>${d.getDate()}</b></div>`).join('') + `</div>`;
+  // fila "todo el día": evaluaciones y entregas sin hora
+  html += `<div class="wk-row wk-allday"><div class="wk-ad-label">todo el día</div>` + isos.map(iso=>{
+    const chips = (byDate[iso]||[]).filter(e=>e.cat!=='study' && !e.time).map(ev=>
+      `<div class="chip ${ev.cat}" style="--c:${COURSES[ev.course].color}"><span class="chip-code">${esc(ev.course)}</span><span class="chip-text">${esc(ev.title)}</span></div>`).join('');
+    return `<div class="wk-ad" data-iso="${iso}">${chips}</div>`;
+  }).join('') + `</div>`;
+  // cuerpo con horas
+  let hours = '';
+  for(let h=minH; h<maxH; h++) hours += `<span style="top:${(h-minH)*HH + (h===minH?2:0)}px${h===minH?';transform:none':''}">${String(h).padStart(2,'0')}:00</span>`;
+  html += `<div class="wk-row"><div class="wk-hour-col">${hours}</div>` + isos.map((iso,i)=>{
+    const items = layoutBlocks(timed[i].map(ev=>({ev, s:toMin(ev.time.start), e:toMin(ev.time.end)})));
+    const blocks = items.map(it=>{
+      const ev = it.ev, a = areaOf(ev);
+      const top = (it.s - minH*60)/60*HH, height = Math.max(18, (it.e-it.s)/60*HH - 2);
+      const label = ev.cat==='study'
+        ? `<b>${esc(ev.course)}</b>${esc([a?a.code:'', ev.title].filter(Boolean).join(' '))}`
+        : `<b>${esc(ev.course)}</b>${esc(ev.title)}`;
+      return `<div class="wk-block ${ev.cat}" data-id="${ev.id}" style="--c:${COURSES[ev.course].color};top:${top}px;height:${height}px;left:calc(${it.col/it.n*100}% + 1px);width:calc(${100/it.n}% - 3px);">
+        <span class="wk-t">${timeText(ev)}</span>${label}</div>`;
+    }).join('');
+    const now = new Date();
+    const nowLine = iso===todayISO && now.getHours()>=minH ? `<div class="wk-now" style="top:${((now.getHours()*60+now.getMinutes())-minH*60)/60*HH}px"></div>` : '';
+    return `<div class="wk-col ${iso===todayISO?'today':''}" data-iso="${iso}">${blocks}${nowLine}</div>`;
+  }).join('') + `</div></div>`;
+  weekScroll.innerHTML = html;
+  weekScroll.dataset.minh = minH;
+  weekScroll.scrollLeft = keepL; weekScroll.scrollTop = keepT;
+}
+
+// Al abrir la vista o cambiar de semana: deja a la vista el día de hoy y la hora actual.
+function positionWeek(){
+  const mh = Number(weekScroll.dataset.minh || WK_MIN_H);
+  const col = weekScroll.querySelector('.wk-col.today');
+  weekScroll.scrollLeft = col ? Math.max(0, col.offsetLeft - 46) : 0;
+  const nowH = new Date().getHours();
+  weekScroll.scrollTop = col ? Math.max(0, (Math.max(nowH-1, mh) - mh) * 44) : 0;
+}
+
+weekScroll.addEventListener('click', e=>{
+  const block = e.target.closest('.wk-block');
+  if(block){ const ev = EVENTS.find(x=>x.id===Number(block.dataset.id)); if(ev) openEditForm(ev); return; }
+  const dh = e.target.closest('.wk-dh, .wk-ad');
+  if(dh){ const iso = dh.dataset.iso; (byDate[iso]||[]).length ? openDetail(iso) : openEditForm(null, iso); return; }
+  const col = e.target.closest('.wk-col');
+  if(col){
+    // Un toque en un hueco crea un bloque de estudio de 1 h (inicio redondeado a 30 min).
+    const mh = Number(weekScroll.dataset.minh);
+    const y = e.clientY - col.getBoundingClientRect().top;
+    const startMin = Math.min(23*60, Math.floor((mh*60 + y/44*60)/30)*30);
+    openEditForm(null, col.dataset.iso, {cat:'study', start:fmtHM(startMin), end:fmtHM(Math.min(24*60-1, startMin+60))});
+  }
+});
+function shiftWeek(n){ weekStart.setDate(weekStart.getDate() + n*7); renderWeek(); positionWeek(); }
+document.getElementById('wkPrev').addEventListener('click', ()=> shiftWeek(-1));
+document.getElementById('wkNext').addEventListener('click', ()=> shiftWeek(1));
+document.getElementById('wkToday').addEventListener('click', ()=>{ weekStart = mondayOf(today); renderWeek(); positionWeek(); });
+
+function setView(v){
+  view = v;
+  setPref(VIEW_KEY, v);
+  document.querySelectorAll('#viewSeg button').forEach(b=> b.classList.toggle('on', b.dataset.view===v));
+  monthsEl.style.display = v==='month' ? '' : 'none';
+  quicknav.style.display = v==='month' ? '' : 'none';
+  weekView.style.display = v==='week' ? '' : 'none';
+  if(v==='week'){ renderWeek(); positionWeek(); }
+}
+document.getElementById('viewSeg').addEventListener('click', e=>{
+  const b = e.target.closest('button'); if(b) setView(b.dataset.view);
+});
+
 function rerender(){
   rebuildIndex();
+  renderEdg();
   renderUpcoming();
   renderConflicts();
   renderMonths();
+  if(view==='week') renderWeek();
 }
 
 /* ================= DETAIL SHEET (view) ================= */
@@ -723,12 +1107,13 @@ function openDetail(iso){
   detailList.innerHTML='';
   events.forEach(ev=>{
     const info = COURSES[ev.course];
+    const a = areaOf(ev);
     const row = document.createElement('div');
     row.className='detail-item';
-    const catLabel = CAT_LABEL[ev.cat] ? `<span class="detail-cat">${CAT_LABEL[ev.cat]}</span>` : '';
-    row.innerHTML = `<span class="detail-code" style="--c:${info.color}">${ev.course}</span>
-      <div style="flex:1;min-width:0;">${catLabel}<div class="detail-title">${ev.title}</div>
-      <div class="detail-course">${info.name}</div></div>
+    row.innerHTML = `<span class="detail-code" style="--c:${info.color}">${esc(ev.course)}</span>
+      <div style="flex:1;min-width:0;"><span class="detail-cat">${CAT_LABEL[ev.cat]}${ev.time?`<span class="detail-time">${timeText(ev)}</span>`:''}</span>
+      <div class="detail-title">${esc(evTitle(ev))}</div>
+      <div class="detail-course">${esc(info.name)}${a?' · '+esc(a.name):''}</div></div>
       <div class="item-actions">
         <button class="icon-btn" data-action="edit" data-id="${ev.id}" title="Editar">✎</button>
         <button class="icon-btn" data-action="delete" data-id="${ev.id}" title="Eliminar">🗑</button>
@@ -754,7 +1139,7 @@ function openDetail(iso){
         closeDetail();
         openEditForm(ev);
       } else if(action==='delete'){
-        if(confirm(`¿Eliminar "${ev.title}"?`)){
+        if(confirm(`¿Eliminar "${evTitle(ev)}"?`)){
           const idx = EVENTS.findIndex(x=>x.id===id);
           if(idx>-1) EVENTS.splice(idx,1);
           saveLocal();
@@ -779,40 +1164,105 @@ const editSheet = document.getElementById('editSheet');
 const editTitle = document.getElementById('editTitle');
 const fFecha = document.getElementById('fFecha');
 const fCurso = document.getElementById('fCurso');
+const fArea = document.getElementById('fArea');
 const fTipo = document.getElementById('fTipo');
+const fIni = document.getElementById('fIni');
+const fFin = document.getElementById('fFin');
 const fTitulo = document.getElementById('fTitulo');
+const fRepetir = document.getElementById('fRepetir');
+const fHasta = document.getElementById('fHasta');
+const fAlcance = document.getElementById('fAlcance');
 const fSave = document.getElementById('fSave');
 const fDelete = document.getElementById('fDelete');
+const fDias = document.getElementById('fDias');
+let lastCourse = 'FS';
+
+fDias.innerHTML = WD1.map((l,i)=>`<label title="${WEEKDAYS[i]}"><input type="checkbox" value="${i}">${l}</label>`).join('');
 
 function renderCourseOptions(){
+  const keep = fCurso.value;
   fCurso.innerHTML = '';
   Object.entries(COURSES).forEach(([code,info])=>{
     const opt = document.createElement('option');
     opt.value = code; opt.textContent = `${code} — ${info.name}`;
     fCurso.appendChild(opt);
   });
+  if(COURSES[keep]) fCurso.value = keep;
+}
+function renderAreaOptions(selected){
+  const areas = (COURSES[fCurso.value] && COURSES[fCurso.value].areas) || [];
+  fArea.innerHTML = '<option value="">— sin área —</option>' + areas.map(a=>`<option value="${esc(a.id)}">${esc(a.code)} — ${esc(a.name)}</option>`).join('');
+  fArea.value = selected || '';
+  document.getElementById('rowArea').style.display = areas.length ? '' : 'none';
 }
 
 let editingId = null;
 
-function openEditForm(ev, prefillDate){
+function weekdayIdx(iso){ return (parseISO(iso).getDay()+6)%7; }
+function repeatDates(){
+  const start = fFecha.value, until = fHasta.value;
+  const set = new Set([...fDias.querySelectorAll('input:checked')].map(i=>Number(i.value)));
+  const out = [];
+  if(!start || !until || until < start || !set.size) return out;
+  for(let d=start; d<=until; d=addDaysISO(d,1)) if(set.has(weekdayIdx(d))) out.push(d);
+  return out;
+}
+function syncForm(){
+  const study = fTipo.value==='study';
+  renderAreaOptions(fArea.value);
+  document.getElementById('lblIni').textContent = study ? 'Hora inicio' : 'Hora inicio (opcional)';
+  document.getElementById('lblFin').textContent = study ? 'Hora fin' : 'Hora fin (opcional)';
+  document.getElementById('lblTitulo').textContent = study ? 'Título (opcional)' : 'Título';
+  fTitulo.placeholder = study ? 'Ej: Repaso capítulo 3' : 'Ej: Prueba 2 (25%)';
+  document.getElementById('rowRepetir').style.display = study && !editingId ? '' : 'none';
+  document.getElementById('repBox').style.display = study && !editingId && fRepetir.checked ? '' : 'none';
+  const n = repeatDates().length;
+  document.getElementById('repCount').textContent = fRepetir.checked ? (n ? `Se crearán ${n} bloque${n===1?'':'s'}.` : 'Elige al menos un día y una fecha final posterior al inicio.') : '';
+}
+[fCurso, fTipo, fFecha, fHasta].forEach(el=> el.addEventListener('change', syncForm));
+fDias.addEventListener('change', syncForm);
+fRepetir.addEventListener('change', ()=>{
+  if(fRepetir.checked){
+    if(!fDias.querySelector('input:checked') && fFecha.value) fDias.querySelector(`input[value="${weekdayIdx(fFecha.value)}"]`).checked = true;
+    if(!fHasta.value && fFecha.value){
+      const exam = EVENTS.filter(e=>e.course===fCurso.value && fCurso.value==='EDG' && e.cat==='eval' && e.date>fFecha.value).map(e=>e.date).sort()[0];
+      fHasta.value = exam ? addDaysISO(exam,-1) : addDaysISO(fFecha.value, 27);
+    }
+  }
+  syncForm();
+});
+
+function openEditForm(ev, prefillDate, preset){
+  const p = preset || {};
+  document.querySelectorAll('#fDias input').forEach(i=> i.checked=false);
+  fRepetir.checked = false; fHasta.value = '';
   if(ev){
     editingId = ev.id;
     editTitle.textContent = 'Editar evento';
     fFecha.value = ev.date;
     fCurso.value = ev.course;
-    fTipo.value = ev.cat === 'deadline' ? 'deadline' : 'eval';
-    fTitulo.value = ev.title;
+    fTipo.value = ev.cat;
+    fIni.value = ev.time ? ev.time.start : '';
+    fFin.value = ev.time ? ev.time.end : '';
+    fTitulo.value = ev.title || '';
+    renderAreaOptions(ev.area);
     fDelete.style.display = 'inline-flex';
+    fAlcance.value = 'one';
+    document.getElementById('rowAlcance').style.display = ev.series ? '' : 'none';
   } else {
     editingId = null;
-    editTitle.textContent = 'Agregar evento';
+    editTitle.textContent = p.cat==='study' ? 'Nuevo bloque de estudio' : 'Agregar evento';
     fFecha.value = prefillDate || '';
-    fCurso.value = 'FS';
-    fTipo.value = 'eval';
+    fCurso.value = COURSES[lastCourse] ? lastCourse : Object.keys(COURSES)[0];
+    fTipo.value = p.cat || 'eval';
+    fIni.value = p.start || '';
+    fFin.value = p.end || '';
     fTitulo.value = '';
+    renderAreaOptions('');
     fDelete.style.display = 'none';
+    document.getElementById('rowAlcance').style.display = 'none';
   }
+  syncForm();
   editSheet.classList.add('show');
   scrim.classList.add('show');
 }
@@ -826,24 +1276,57 @@ document.getElementById('fCancel').addEventListener('click', closeEditForm);
 document.getElementById('btnAdd').addEventListener('click', ()=> openEditForm(null));
 document.getElementById('fabAdd').addEventListener('click', ()=> openEditForm(null));
 
+function newUid(course, date, seed){
+  let uid = ICSCore.makeUid(course, date, seed);
+  while(EVENTS.some(x=>x.uid===uid)) uid = uid.replace(/(-x\w+)?@/, '-x' + Math.random().toString(36).slice(2,6) + '@');
+  return uid;
+}
+
 fSave.addEventListener('click', ()=>{
-  const date = fFecha.value;
-  const course = fCurso.value;
-  const cat = fTipo.value;
-  const title = fTitulo.value.trim();
-  if(!date || !title){
-    alert('Completa al menos la fecha y el título.');
-    return;
-  }
+  const date = fFecha.value, course = fCurso.value, cat = fTipo.value, title = fTitulo.value.trim();
+  const area = document.getElementById('rowArea').style.display==='none' ? '' : fArea.value;
+  const start = fIni.value, end = fFin.value;
+  const time = start && end ? {start, end} : null;
+  if(!date){ alert('Completa la fecha.'); return; }
+  if(cat!=='study' && !title){ alert('Completa al menos la fecha y el título.'); return; }
+  if(cat==='study' && !time){ alert('Un bloque de estudio necesita hora de inicio y de fin.'); return; }
+  if((start||end) && !time){ alert('Completa la hora de inicio y la de fin, o deja ambas vacías.'); return; }
+  if(time && toMin(end) <= toMin(start)){ alert('La hora de fin debe ser posterior a la de inicio.'); return; }
+
+  const apply = (e, d)=>{
+    // El UID se conserva al editar (así reimportar el .ics actualiza en vez de duplicar).
+    e.date = d; e.course = course; e.cat = cat; e.seq = (e.seq||0)+1;
+    if(title) e.title = title; else delete e.title;
+    if(area) e.area = area; else delete e.area;
+    if(time) e.time = {...time}; else delete e.time;
+  };
+
   if(editingId){
     const ev = EVENTS.find(x=>x.id===editingId);
-    // El UID se conserva al editar (así reimportar el .ics actualiza en vez de duplicar).
-    if(ev){ ev.date=date; ev.course=course; ev.cat=cat; ev.title=title; ev.seq=(ev.seq||0)+1; }
+    if(ev){
+      if(ev.series && fAlcance.value==='next'){
+        const delta = daysBetween(ev.date, date);
+        EVENTS.filter(e=> e.series===ev.series && e.date>=ev.date).forEach(e=> apply(e, addDaysISO(e.date, delta)));
+      } else {
+        apply(ev, date);
+      }
+    }
+  } else if(cat==='study' && fRepetir.checked){
+    const dates = repeatDates();
+    if(!dates.length){ alert('Elige al menos un día de la semana y una fecha final posterior al inicio.'); return; }
+    if(daysBetween(date, fHasta.value) > 400){ alert('La repetición no puede pasar de 400 días.'); return; }
+    const series = 's' + Date.now().toString(36);
+    dates.forEach(d=>{
+      const e = {id:nextId++, uid:newUid(course, d, (title||area||'estudio')+start), series, seq:0};
+      apply(e, d); e.seq = 0;
+      EVENTS.push(e);
+    });
   } else {
-    let uid = ICSCore.makeUid(course, date, title);
-    if(EVENTS.some(x=>x.uid===uid)) uid = uid.replace('@', '-' + Date.now().toString(36) + '@');
-    EVENTS.push({id:nextId++, uid, date, course, cat, title, seq:0});
+    const e = {id:nextId++, uid:newUid(course, date, (title||area||'estudio')+start), seq:0};
+    apply(e, date); e.seq = 0;
+    EVENTS.push(e);
   }
+  lastCourse = course;
   saveLocal();
   if(date < SEM_MIN || date > SEM_MAX){
     alert('Ojo: esa fecha cae fuera de agosto 2026 – diciembre 2027, así que se guarda pero no se va a ver en el calendario visual.');
@@ -855,35 +1338,39 @@ fSave.addEventListener('click', ()=>{
 fDelete.addEventListener('click', ()=>{
   if(!editingId) return;
   const ev = EVENTS.find(x=>x.id===editingId);
-  if(ev && confirm(`¿Eliminar "${ev.title}"?`)){
-    const idx = EVENTS.findIndex(x=>x.id===editingId);
-    if(idx>-1) EVENTS.splice(idx,1);
+  if(!ev) return;
+  const next = ev.series && fAlcance.value==='next';
+  const msg = next ? 'los bloques de esta repetición desde esta fecha' : `"${evTitle(ev)}"`;
+  if(confirm(`¿Eliminar ${msg}?`)){
+    EVENTS = next ? EVENTS.filter(e=> !(e.series===ev.series && e.date>=ev.date)) : EVENTS.filter(e=>e.id!==ev.id);
     saveLocal();
     rerender();
     closeEditForm();
   }
 });
 
-scrim.addEventListener('click', ()=>{ closeDetail(); closeEditForm(); closeIcsSheet(); });
+function closeAllSheets(){ closeDetail(); closeEditForm(); closeIcsSheet(); closeMoreSheet(); }
+scrim.addEventListener('click', closeAllSheets);
 
-/* ================= DATOS: carga, guardado local, restablecer ================= */
+/* ================= DATOS: carga, guardado local, fusión, restablecer ================= */
 function exportData(){
   return { ...META, courses: COURSES, events: EVENTS.map(({id, ...rest})=> rest) };
 }
 function saveLocal(){
-  try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(exportData())); }
+  try{ localStorage.setItem(STORAGE_KEY, JSON.stringify({...exportData(), baseUids: BASE_UIDS})); }
   catch(e){ alert('No se pudo guardar en este dispositivo. Exporta un respaldo para no perder los cambios.'); }
 }
 function loadLocal(){
   try{
     const data = JSON.parse(localStorage.getItem(STORAGE_KEY));
-    return data && Array.isArray(data.events) ? data : null;
+    return data && Array.isArray(data.events) && data.courses ? data : null;
   }catch(e){ return null; }
 }
 function applyData(data){
   META = { version:data.version, timezone:data.timezone };
   COURSES = data.courses;
   EVENTS = data.events.map(ev=> ({...ev, id: nextId++}));
+  BASE_UIDS = data.baseUids || data.events.map(e=>e.uid);
   renderLegend();
   renderCourseOptions();
   renderTimeline();
@@ -894,11 +1381,37 @@ async function fetchOriginal(){
   if(!res.ok) throw new Error('events.json ' + res.status);
   return res.json();
 }
+// Suma a los datos locales lo que events.json trae y este dispositivo nunca vio
+// (cursos y eventos nuevos), sin pisar ediciones ni resucitar lo que borraste.
+function mergeBase(local, base){
+  const have = new Set(local.events.map(e=>e.uid));
+  const seen = local.baseUids ? new Set(local.baseUids) : null;
+  const lv = local.version || 1;
+  const courses = {...local.courses};
+  const events = local.events.slice();
+  let changed = false;
+  Object.entries(base.courses).forEach(([k,c])=>{ if(!courses[k]){ courses[k] = c; changed = true; } });
+  base.events.forEach(e=>{
+    const wasSeen = seen ? seen.has(e.uid) : !(e.added > lv);
+    if(!wasSeen && !have.has(e.uid)){ events.push(e); changed = true; }
+  });
+  const baseUids = base.events.map(e=>e.uid);
+  if(!local.baseUids || local.baseUids.length !== baseUids.length || (local.version||1) !== base.version) changed = true;
+  return { changed, data: {...local, version:base.version, timezone:base.timezone, courses, events, baseUids} };
+}
 async function boot(){
+  const local = loadLocal();
   try{
-    applyData(loadLocal() || await fetchOriginal());
+    if(!local){
+      applyData(await fetchOriginal());
+      return;
+    }
+    applyData(local);                                  // se muestra al tiro, sin esperar la red
+    const base = await Promise.race([fetchOriginal(), new Promise((_,rej)=> setTimeout(rej, 4000))]);
+    const m = mergeBase(local, base);
+    if(m.changed){ applyData(m.data); saveLocal(); }
   }catch(e){
-    document.getElementById('upcoming').innerHTML = '<p class="empty-msg">No se pudieron cargar los datos. Revisa la conexión y vuelve a abrir la app.</p>';
+    if(!EVENTS.length) document.getElementById('upcoming').innerHTML = '<p class="empty-msg">No se pudieron cargar los datos. Revisa la conexión y vuelve a abrir la app.</p>';
   }
 }
 
@@ -908,12 +1421,13 @@ document.getElementById('btnReset').addEventListener('click', async ()=>{
     const data = await fetchOriginal();
     try{ localStorage.removeItem(STORAGE_KEY); }catch(e){}
     applyData(data);
+    closeMoreSheet();
   }catch(e){
     alert('No se pudieron cargar los datos originales. Tus cambios siguen intactos.');
   }
 });
 
-/* ================= EXPORTAR: respaldo .json y .ics ================= */
+/* ================= EXPORTAR / IMPORTAR ================= */
 function downloadFile(name, text, type){
   const blob = new Blob([text], {type});
   const url = URL.createObjectURL(blob);
@@ -927,23 +1441,46 @@ function downloadFile(name, text, type){
 }
 
 document.getElementById('btnBackup').addEventListener('click', ()=>{
-  const t = new Date();
-  downloadFile(`calendario-respaldo-${isoLocal(t.getFullYear(), t.getMonth(), t.getDate())}.json`,
-    JSON.stringify(exportData(), null, 2) + '\n', 'application/json');
+  downloadFile(`calendario-respaldo-${todayISO}.json`,
+    JSON.stringify({...exportData(), baseUids: BASE_UIDS}, null, 2) + '\n', 'application/json');
 });
+
+const fileImport = document.getElementById('fileImport');
+document.getElementById('btnImport').addEventListener('click', ()=> fileImport.click());
+fileImport.addEventListener('change', async ()=>{
+  const f = fileImport.files[0]; fileImport.value = '';
+  if(!f) return;
+  let data;
+  try{
+    data = JSON.parse(await f.text());
+    if(!data || typeof data.courses!=='object' || !Array.isArray(data.events)) throw new Error('formato');
+    data.events.forEach(e=>{ if(!e.uid || !e.date || !e.cat || !data.courses[e.course]) throw new Error('evento'); });
+  }catch(e){ alert('El archivo no es un respaldo válido de este calendario.'); return; }
+  if(!confirm(`¿Importar ${data.events.length} eventos? Reemplaza los datos de este dispositivo.`)) return;
+  applyData(data);
+  saveLocal();
+  closeMoreSheet();
+});
+
+const moreSheet = document.getElementById('moreSheet');
+function openMoreSheet(){ moreSheet.classList.add('show'); scrim.classList.add('show'); }
+function closeMoreSheet(){ moreSheet.classList.remove('show'); scrim.classList.remove('show'); }
+document.getElementById('btnMore').addEventListener('click', openMoreSheet);
+document.getElementById('moreClose').addEventListener('click', closeMoreSheet);
 
 const icsSheet = document.getElementById('icsSheet');
 const icsList = document.getElementById('icsList');
 function openIcsSheet(){
+  closeMoreSheet();
   icsList.innerHTML = '';
   Object.entries(COURSES).forEach(([code,info])=>{
-    const n = EVENTS.filter(ev=>ev.course===code).length;
+    const n = EVENTS.filter(ev=>ev.course===code && ev.cat!=='study').length;
     const row = document.createElement('div');
     row.className='detail-item';
-    row.innerHTML = `<span class="detail-code" style="--c:${info.color}">${code}</span>
-      <div style="flex:1;min-width:0;"><div class="detail-title">${info.name}</div>
-      <div class="detail-course">${n} evento${n===1?'':'s'} · ${code}.ics</div></div>
-      <div class="item-actions"><button class="btn btn-secondary" data-ics="${code}">⬇ Descargar</button></div>`;
+    row.innerHTML = `<span class="detail-code" style="--c:${info.color}">${esc(code)}</span>
+      <div style="flex:1;min-width:0;"><div class="detail-title">${esc(info.name)}</div>
+      <div class="detail-course">${n} evento${n===1?'':'s'} · ${esc(code)}.ics</div></div>
+      <div class="item-actions"><button class="btn btn-secondary" data-ics="${esc(code)}">⬇ Descargar</button></div>`;
     icsList.appendChild(row);
   });
   icsList.querySelectorAll('[data-ics]').forEach(btn=>{
@@ -963,6 +1500,7 @@ document.getElementById('btnExportIcs').addEventListener('click', openIcsSheet);
 document.getElementById('icsClose').addEventListener('click', closeIcsSheet);
 
 /* ================= ARRANQUE ================= */
+setView(getPref(VIEW_KEY)==='week' ? 'week' : 'month');
 boot();
 if('serviceWorker' in navigator){
   window.addEventListener('load', ()=> navigator.serviceWorker.register('sw.js'));

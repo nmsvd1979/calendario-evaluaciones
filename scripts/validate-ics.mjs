@@ -8,6 +8,7 @@ import ICAL from 'ical.js';
 const root = fileURLToPath(new URL('..', import.meta.url));
 const dir = resolve(process.argv[2] || join(root, 'ics'));
 const data = JSON.parse(readFileSync(join(root, 'events.json'), 'utf8'));
+data.events = data.events.filter(e => e.cat !== 'study'); // los bloques de estudio no deben llegar a los .ics
 const compareWithSource = !process.argv[2];
 
 const errors = [];

@@ -112,7 +112,7 @@
 
   function buildCalendar(code, data, now) {
     const course = data.courses[code];
-    const events = data.events.filter(e => e.course === code)
+    const events = data.events.filter(e => e.course === code && e.cat !== 'study') // los bloques de estudio no van a Apple
       .slice().sort((a, b) => a.date.localeCompare(b.date) || a.uid.localeCompare(b.uid));
     const stamp = utcStamp(now || new Date());
     const L = [
@@ -139,7 +139,7 @@
       }
       L.push(
         'SUMMARY:' + sum,
-        'DESCRIPTION:' + escapeText(course.name),
+        'DESCRIPTION:' + escapeText(course.name + (ev.note ? '\n' + ev.note : '')),
         'CATEGORIES:' + escapeText(CAT_PREFIX[ev.cat] || 'EVAL'),
         'BEGIN:VALARM',
         'ACTION:DISPLAY',

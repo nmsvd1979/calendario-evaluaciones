@@ -1,5 +1,5 @@
 {
-  "version": 1,
+  "version": 2,
   "timezone": "America/Santiago",
   "courses": {
     "FS": {
@@ -21,6 +21,48 @@
     "LE": {
       "name": "Liderazgo Estratégico",
       "color": "#2452C7"
+    },
+    "EDG": {
+      "name": "Examen de Grado",
+      "color": "#C4511A",
+      "areas": [
+        {
+          "id": "personas",
+          "code": "Pers",
+          "name": "Dirección de Personas",
+          "section": "S1"
+        },
+        {
+          "id": "dye",
+          "code": "DyE",
+          "name": "Dirección de Empresas y Estrategia",
+          "section": "S1"
+        },
+        {
+          "id": "tf",
+          "code": "TF",
+          "name": "Teoría Financiera",
+          "section": "S2"
+        },
+        {
+          "id": "df",
+          "code": "DF",
+          "name": "Dirección Financiera",
+          "section": "S2"
+        },
+        {
+          "id": "fm",
+          "code": "FM",
+          "name": "Fundamentos de Marketing",
+          "section": "S3"
+        },
+        {
+          "id": "ma",
+          "code": "MA",
+          "name": "Marketing Analytics",
+          "section": "S3"
+        }
+      ]
     }
   },
   "events": [
@@ -299,6 +341,66 @@
       "cat": "deadline",
       "title": "Fecha máxima Trabajo Final",
       "seq": 0
+    },
+    {
+      "uid": "EDG-20261124-4491010000@calendario-uc",
+      "date": "2026-11-24",
+      "course": "EDG",
+      "cat": "deadline",
+      "title": "Abre inscripción EdG (3 secciones)",
+      "seq": 0,
+      "added": 2
+    },
+    {
+      "uid": "EDG-20261211-fe4c8f70fc@calendario-uc",
+      "date": "2026-12-11",
+      "course": "EDG",
+      "cat": "deadline",
+      "title": "Cierra inscripción EdG (3 secciones)",
+      "seq": 0,
+      "added": 2
+    },
+    {
+      "uid": "EDG-20270121-27dd5809a0@calendario-uc",
+      "date": "2027-01-21",
+      "course": "EDG",
+      "cat": "eval",
+      "title": "Examen de Grado — bloque 1",
+      "time": {
+        "start": "09:00",
+        "end": "11:00"
+      },
+      "note": "Duración no informada: el horario de término es provisional (2 h).",
+      "seq": 0,
+      "added": 2
+    },
+    {
+      "uid": "EDG-20270121-cc186aeb4f@calendario-uc",
+      "date": "2027-01-21",
+      "course": "EDG",
+      "cat": "eval",
+      "title": "Examen de Grado — bloque 2",
+      "time": {
+        "start": "14:00",
+        "end": "16:00"
+      },
+      "note": "Duración no informada: el horario de término es provisional (2 h).",
+      "seq": 0,
+      "added": 2
+    },
+    {
+      "uid": "EDG-20270122-6adaab071e@calendario-uc",
+      "date": "2027-01-22",
+      "course": "EDG",
+      "cat": "eval",
+      "title": "Examen de Grado — bloque 3",
+      "time": {
+        "start": "09:00",
+        "end": "11:00"
+      },
+      "note": "Duración no informada: el horario de término es provisional (2 h).",
+      "seq": 0,
+      "added": 2
     }
   ]
 }
