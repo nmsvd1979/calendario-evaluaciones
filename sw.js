@@ -1,5 +1,5 @@
 // Service worker: la app funciona sin internet después de la primera visita.
-const CACHE = 'calendario-uc-v4';
+const CACHE = 'calendario-uc-v5';
 const SHELL = [
   './', 'index.html', 'events.json', 'ics-core.js', 'fonts.css', 'manifest.webmanifest',
   'icons/icon.svg', 'icons/icon-192.png', 'icons/icon-512.png',

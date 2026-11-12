@@ -32,10 +32,9 @@
   }
   *{box-sizing:border-box;}
   html{scroll-behavior:smooth;}
-  html, body{
-    overflow-x:hidden;
-    width:100%;
-  }
+  html, body{width:100%;}
+  /* overflow-x:hidden en body lo vuelve contenedor de scroll y rompe el position:sticky de la barra superior; clip evita ese efecto. */
+  body{overflow-x:hidden;overflow-x:clip;}
   body{
     margin:0;
     background:var(--bg);
@@ -406,6 +405,18 @@
   .wk-block b{font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:.58rem;margin-right:3px;}
   .wk-now{position:absolute;left:0;right:0;border-top:2px solid var(--ec);z-index:2;pointer-events:none;}
   .wk-now::before{content:"";position:absolute;left:-4px;top:-5px;width:8px;height:8px;border-radius:50%;background:var(--ec);}
+  .masthead-row{
+    max-width:1120px;width:100%;margin:0 auto;display:flex;align-items:center;gap:10px;
+    padding:0 max(16px, env(safe-area-inset-right)) 0 max(16px, env(safe-area-inset-left));
+  }
+  .masthead-row .masthead-inner{flex:1;min-width:0;width:auto;max-width:none;margin:0;padding:0;}
+  #btnHoy{
+    flex-shrink:0;border:none;cursor:pointer;background:#fff;color:var(--ink);
+    font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:.74rem;
+    border-radius:999px;padding:6px 15px;
+  }
+  #btnHoy:active{background:#DFE3EA;}
+  #weekView{scroll-margin-top:calc(60px + env(safe-area-inset-top));}
   .form-2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
   .form-check{display:flex;align-items:center;gap:8px;font-size:.88rem;cursor:pointer;margin:0 0 10px;}
   .form-check input{width:auto;}
@@ -426,8 +437,11 @@
 <div id="scrim"></div>
 
 <div id="masthead">
-  <div class="masthead-inner">
-    <div class="legend-strip" id="legendStrip"></div>
+  <div class="masthead-row">
+    <button id="btnHoy" title="Ir a hoy">Hoy</button>
+    <div class="masthead-inner">
+      <div class="legend-strip" id="legendStrip"></div>
+    </div>
   </div>
 </div>
 
@@ -698,15 +712,6 @@ MONTHS.forEach(mo=>{
   });
   quicknav.appendChild(pill);
 });
-const todayPill = document.createElement('div');
-todayPill.className='nav-pill today-pill';
-todayPill.textContent='Hoy ↓';
-todayPill.style.display='none';
-todayPill.addEventListener('click', ()=>{
-  const el = document.querySelector('.day-cell.today');
-  if(el) el.scrollIntoView({behavior:'smooth', block:'center'});
-});
-quicknav.insertBefore(todayPill, quicknav.firstChild);   // "Hoy" primero: si no, queda fuera de pantalla en el iPhone
 
 /* ================= HERO TIMELINE ================= */
 const timelineEl = document.getElementById('timeline');
@@ -963,7 +968,6 @@ function renderMonths(){
     monthsEl.appendChild(card);
   });
 
-  todayPill.style.display = document.querySelector('.day-cell.today') ? 'inline-block' : 'none';
 }
 
 /* ================= VISTA SEMANA ================= */
@@ -1119,6 +1123,22 @@ document.addEventListener('keydown', e=>{
   if(e.key==='ArrowRight'){ e.preventDefault(); shiftView(1); }
   else if(e.key==='ArrowLeft'){ e.preventDefault(); shiftView(-1); }
 });
+
+// Botón "Hoy" de la barra fija: salta a hoy desde cualquier parte.
+function goToday(){
+  cursor = new Date(today);
+  if(isGrid()){
+    renderWeek(); positionWeek();
+    weekView.scrollIntoView({behavior:'smooth', block:'start'});
+  } else {
+    const cell = document.querySelector('.day-cell.today');
+    if(!cell) return;
+    const card = cell.closest('.month-card');
+    if(card.classList.contains('collapsed')) toggleMonth(card);
+    cell.scrollIntoView({behavior:'smooth', block:'center'});
+  }
+}
+document.getElementById('btnHoy').addEventListener('click', goToday);
 
 function setView(v){
   view = v;
